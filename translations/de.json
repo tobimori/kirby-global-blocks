@@ -1,0 +1,17 @@
+{
+	"title": "Globale Blöcke",
+	"create": "Globalen Block erstellen",
+	"createFromBlock": "In globalen Block umwandeln",
+	"edit": "Globalen Block bearbeiten",
+	"detach": "Vom globalen Block lösen",
+	"global": "Globaler Block",
+	"globalPlural": "Globale Blöcke",
+	"blockTypes": "Blocktypen",
+	"titleLabel": "Titel",
+	"descriptionLabel": "Beschreibung",
+	"typeLabel": "Blocktyp",
+	"empty": "Noch keine globalen Blöcke",
+	"missing": "Der globale Block existiert nicht",
+	"deleteReferenced": "Dieser globale Block wird noch verwendet und kann nicht gelöscht werden.",
+	"locked": "Dieser globale Block wird von einer anderen Person bearbeitet."
+}

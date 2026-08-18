@@ -1,0 +1,5 @@
+/node_modules/
+/vendor/
+/index.dev.mjs
+/.php-cs-fixer.cache
+/.DS_Store

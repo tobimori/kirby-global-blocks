@@ -1,0 +1,19 @@
+[tools]
+node = "24"
+php = "8.5.9"
+pnpm = "11.20.0"
+
+[tasks.setup]
+description = "Install plugin dependencies"
+run = [
+	"composer install",
+	"pnpm install --frozen-lockfile",
+]
+
+[tasks.dev]
+description = "Start the KirbyUp development server"
+run = "pnpm dev"
+
+[tasks.build]
+description = "Build the Panel plugin"
+run = "pnpm build"
