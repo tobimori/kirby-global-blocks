@@ -304,7 +304,9 @@ class GlobalBlocks
 								'field' => $field,
 								'id' => $model->id(),
 								'language' => $language->code(),
-								'link' => $model->panel()->url(true),
+								'link' => $model instanceof GlobalBlockPage
+									? $model->globalPanelUrl(true)
+									: $model->panel()->url(true),
 								'text' => $model->title()->value(),
 							];
 						}

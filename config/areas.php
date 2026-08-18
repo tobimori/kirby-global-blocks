@@ -10,10 +10,36 @@ return [
 		}
 
 		return [
+			'breadcrumb' => [
+				[
+					'label' => t('global-blocks.title') ?? 'Global blocks',
+					'link' => '/global-blocks',
+				],
+			],
 			'icon' => 'globe',
 			'label' => t('global-blocks.title') ?? 'Global blocks',
 			'menu' => true,
 			'views' => [
+				'global-block' => [
+					'pattern' => 'global-blocks/(:any)',
+					'action' => function (string $uuid): array {
+						$global = GlobalBlocks::findOrFail($uuid);
+						$view = $global->panel()->view();
+						$view['breadcrumb'] = [
+							[
+								'label' => $global->title()->value(),
+								'link' => $global->globalPanelUrl(true),
+							],
+						];
+						$view['props']['link'] = $global->globalPanelUrl(true);
+						$view['props']['model']['link'] = $global->globalPanelUrl(true);
+						$view['props']['model']['parent'] = '/global-blocks';
+						$view['props']['next'] = null;
+						$view['props']['prev'] = null;
+
+						return $view;
+					},
+				],
 				'global-blocks' => [
 					'pattern' => 'global-blocks',
 					'action' => function () {
@@ -91,7 +117,7 @@ return [
 
 						return [
 							'event' => 'global-blocks.created',
-							'go' => $global->panel()->url(true),
+							'go' => $global->globalPanelUrl(true),
 						];
 					},
 				],

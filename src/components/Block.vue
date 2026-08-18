@@ -55,6 +55,7 @@
 				isFull,
 				isHidden,
 				isMergable,
+				isRemovable: !isGlobalBlockEditor,
 				isSplitable: globalBlock ? false : isSplitable()
 			}"
 			v-on="listenersForOptions"
@@ -85,6 +86,9 @@ export default {
 				this.fieldset.editable !== false
 			)
 		},
+		isGlobalBlockEditor() {
+			return this.endpoints?.model?.replace(/^\//, "").startsWith("pages/_global+") === true
+		},
 		listeners() {
 			return {
 				append: (event) => this.$emit("append", event),
@@ -100,7 +104,7 @@ export default {
 				open: (tab) => this.open(tab),
 				paste: () => this.$emit("paste"),
 				prepend: (event) => this.$emit("prepend", event),
-				remove: () => this.remove(),
+				remove: () => this.removeBlock(),
 				removeSelected: () => this.$emit("removeSelected"),
 				show: () => this.$emit("show"),
 				sortDown: () => this.$emit("sortDown"),
@@ -143,6 +147,14 @@ export default {
 		}
 	},
 	methods: {
+		backspace(event) {
+			if (event.target.matches("[contenteditable], input, textarea")) {
+				return false
+			}
+
+			event.preventDefault()
+			this.removeBlock()
+		},
 		blocksOwner() {
 			let component = this.$parent
 			while (component && typeof component.makeGlobal !== "function") {
@@ -165,6 +177,11 @@ export default {
 				isHidden: this.isHidden,
 				type: this.type
 			})
+		},
+		removeBlock() {
+			if (this.isGlobalBlockEditor === false) {
+				this.remove()
+			}
 		},
 		async onInput(value) {
 			if (!this.globalBlock) {

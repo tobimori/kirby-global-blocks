@@ -5,7 +5,11 @@ export default {
 			type: Object,
 			default: null
 		},
-		globalBlocksEnabled: Boolean
+		globalBlocksEnabled: Boolean,
+		isRemovable: {
+			type: Boolean,
+			default: true
+		}
 	},
 	emits: ["detachGlobal", "makeGlobal"],
 	computed: {
@@ -24,6 +28,7 @@ export default {
 						click: () => this.$emit("merge")
 					},
 					{
+						when: this.isRemovable,
 						icon: "trash",
 						title: this.$t("remove"),
 						click: () => this.$emit("removeSelected")
@@ -87,6 +92,7 @@ export default {
 					click: () => this.$emit("chooseToAppend")
 				},
 				{
+					when: this.isRemovable,
 					icon: "trash",
 					title: this.$t("delete"),
 					click: () => this.$emit("remove")
@@ -134,12 +140,14 @@ export default {
 							click: () => this.$emit(this.isHidden ? "show" : "hide")
 						},
 						{
+							when: this.isRemovable,
 							icon: "copy",
 							label: this.$t("duplicate"),
 							click: () => this.$emit("duplicate")
 						},
 						"-",
 						{
+							when: this.isRemovable,
 							icon: "trash",
 							label: this.$t("delete"),
 							click: () => this.$emit("remove")

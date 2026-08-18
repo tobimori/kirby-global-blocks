@@ -13,5 +13,6 @@
 	"empty": "Noch keine globalen Blöcke",
 	"missing": "Der globale Block existiert nicht",
 	"deleteReferenced": "Dieser globale Block wird noch verwendet und kann nicht gelöscht werden.",
-	"locked": "Dieser globale Block wird von einer anderen Person bearbeitet."
+	"locked": "Dieser globale Block wird von einer anderen Person bearbeitet.",
+	"singleBlock": "Ein globaler Block muss genau einen Block enthalten."
 }

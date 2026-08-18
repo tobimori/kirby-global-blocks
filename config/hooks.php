@@ -2,22 +2,25 @@
 
 use Kirby\Content\LockedContentException;
 use Kirby\Exception\PermissionException;
+use Kirby\Panel\Panel;
 use tobimori\GlobalBlocks\GlobalBlocks;
 use tobimori\GlobalBlocks\Models\GlobalBlockPage;
 
 return [
-	'route:before' => function ($path, $method): void {
-		if (
-			$method !== 'POST' ||
-			preg_match('!/pages/_global\+([^/]+)/changes/save$!', $path, $matches) !== 1
-		) {
-			return;
+	'panel.route:before' => function ($route, $path) {
+		if ($path === 'pages/_global') {
+			Panel::go(kirby()->url('panel') . '/global-blocks');
 		}
 
-		$block = kirby()->request()->get('block');
-		if (is_array($block) && isset($block[0])) {
-			GlobalBlocks::assertNoCycle($matches[1], $block[0]);
+		if (
+			is_string($path) &&
+			preg_match('!^pages/_global\+([^/]+)$!', $path, $matches) === 1 &&
+			($global = GlobalBlocks::find($matches[1]))
+		) {
+			Panel::go($global->globalPanelUrl());
 		}
+
+		return $route;
 	},
 	'page.delete:before' => function ($page): void {
 		if ($page instanceof GlobalBlockPage === false) {

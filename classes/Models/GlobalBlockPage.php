@@ -7,6 +7,7 @@ use Kirby\Cms\Blocks;
 use Kirby\Cms\Page;
 use Kirby\Cms\PageBlueprint;
 use Kirby\Content\Field;
+use Kirby\Exception\InvalidArgumentException;
 use Kirby\Toolkit\Str;
 use tobimori\GlobalBlocks\GlobalBlocks;
 
@@ -35,6 +36,21 @@ class GlobalBlockPage extends Page
 		return $this->blockForPanel()?->type() ?? 'text';
 	}
 
+	public function contentFileData(array $data, string|null $languageCode = null): array
+	{
+		$data = parent::contentFileData($data, $languageCode);
+		$blocks = Blocks::parse($data['block'] ?? null);
+
+		if (count($blocks) !== 1 || isset($blocks[0]) === false) {
+			throw new InvalidArgumentException(
+				t('global-blocks.singleBlock') ?? 'A global block must contain exactly one block.'
+			);
+		}
+
+		GlobalBlocks::assertNoCycle($this->globalUuid(), $blocks[0]);
+		return $data;
+	}
+
 	public function blueprint(): PageBlueprint
 	{
 		return $this->blueprint ??= new PageBlueprint([
@@ -60,7 +76,7 @@ class GlobalBlockPage extends Page
 			],
 			'tabs' => [
 				'content' => [
-					'label' => 'Content',
+					'label' => t('Content') ?? 'Content',
 					'columns' => [
 						'main' => [
 							'width' => '2/3',
@@ -82,11 +98,11 @@ class GlobalBlockPage extends Page
 									'type' => 'fields',
 									'fields' => [
 										'title' => [
-											'label' => 'global-blocks.titleLabel',
+											'label' => t('global-blocks.titleLabel') ?? 'Title',
 											'type' => 'text',
 										],
 										'description' => [
-											'label' => 'global-blocks.descriptionLabel',
+											'label' => t('global-blocks.descriptionLabel') ?? 'Description',
 											'type' => 'textarea',
 											'buttons' => false,
 										],
@@ -114,6 +130,12 @@ class GlobalBlockPage extends Page
 		return true;
 	}
 
+	public function globalPanelUrl(bool $relative = false): string
+	{
+		$path = '/global-blocks/' . $this->globalUuid();
+		return $relative ? $path : $this->kirby()->url('panel') . $path;
+	}
+
 	public function panelData(): array
 	{
 		$block = $this->blockForPanel();
@@ -125,7 +147,7 @@ class GlobalBlockPage extends Page
 			'fieldEndpoint' => $this->apiUrl(true) . '/fields/block',
 			'icon' => $fieldset?->icon() ?? 'box',
 			'lock' => $this->lock()->toArray(),
-			'panelUrl' => $this->panel()->url(true),
+			'panelUrl' => $this->globalPanelUrl(true),
 			'title' => $this->title()->value(),
 			'type' => $block?->type(),
 			'uuid' => $this->globalUuid(),
