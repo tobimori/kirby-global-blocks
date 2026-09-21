@@ -79,19 +79,24 @@ trait HasGlobalBlocks
 		return $routes;
 	}
 
-	public function expandedReference(GlobalBlockPage $global, string $placementId, bool $isHidden = false): array
-	{
+	public function expandedReference(
+		GlobalBlockPage $global,
+		string $placementId,
+		bool $isHidden = false,
+		?string $revision = null,
+	): array {
 		$source = $global->blockForPanel();
 		if ($source === null) {
 			return $this->missingReference($global->globalUuid(), $placementId, $isHidden);
 		}
 
 		$data = $source->toArray();
-		$data['id'] = $placementId;
+		$data['id'] = $revision ?? $placementId;
 		$data['isHidden'] = $isHidden;
 		$data['content']['_global'] = [
 			...$global->panelData(),
 			'blockId' => $source->id(),
+			'revision' => $revision,
 		];
 
 		return $data;
@@ -104,7 +109,12 @@ trait HasGlobalBlocks
 			if (($block['type'] ?? null) === 'global' && is_string($block['content']['uuid'] ?? null)) {
 				$global = GlobalBlocks::find($block['content']['uuid']);
 				$result[] = $global
-					? $this->expandedReference($global, $block['id'] ?? Str::uuid(), $block['isHidden'] ?? false)
+					? $this->expandedReference(
+						$global,
+						$block['id'] ?? Str::uuid(),
+						$block['isHidden'] ?? false,
+						is_string($block['content']['revision'] ?? null) ? $block['content']['revision'] : null,
+					)
 					: $this->missingReference(
 						$block['content']['uuid'],
 						$block['id'] ?? Str::uuid(),
@@ -160,8 +170,11 @@ trait HasGlobalBlocks
 		}
 
 		return [
-			'content' => ['uuid' => $global['uuid']],
-			'id' => $block['id'] ?? Str::uuid(),
+			'content' => array_filter([
+				'revision' => $global['revision'] ?? null,
+				'uuid' => $global['uuid'],
+			]),
+			'id' => $global['revision'] ?? $block['id'] ?? Str::uuid(),
 			'isHidden' => $block['isHidden'] ?? false,
 			'type' => 'global',
 		];

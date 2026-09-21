@@ -1,4 +1,5 @@
 /node_modules/
 /vendor/
+/.repos/
 /index.dev.mjs
 /.DS_Store

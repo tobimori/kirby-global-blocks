@@ -1,5 +1,20 @@
-.k-global-block-container {
+.k-block-container.k-global-block-container {
+	--global-block-color: var(--color-purple-600);
+	--global-block-text-color: var(--color-white);
+
 	padding-top: 0;
+	border: 1px solid var(--global-block-color);
+}
+
+.k-block-container.k-global-block-container[data-global-locked="true"] {
+	--global-block-color: light-dark(var(--color-red-400), var(--color-red-500));
+	--global-block-text-color: var(--color-red-900);
+}
+
+.k-block-container.k-global-block-container[data-global-locked="true"]
+	> :not(.k-global-block-marker) {
+	opacity: 0.2;
+	pointer-events: none;
 }
 
 .k-global-block-marker {
@@ -8,13 +23,41 @@
 	gap: var(--spacing-2);
 	min-height: 2rem;
 	margin-inline: calc(var(--spacing-3) * -1);
-	margin-bottom: var(--spacing-2);
 	padding-inline: var(--spacing-3);
-	border-bottom: 1px solid var(--panel-color-back);
-	color: var(--color-text-dimmed);
-	font-size: var(--text-xs);
+	border-start-start-radius: calc(var(--rounded) - 1px);
+	border-start-end-radius: calc(var(--rounded) - 1px);
+	background: var(--global-block-color);
+	color: var(--global-block-text-color);
+	font-size: var(--text-sm);
 }
 
-.k-global-block-marker > :last-child {
+.k-global-block-container:not(
+		.k-block-container-type-fields,
+		.k-block-container-type-gallery,
+		.k-block-container-type-image,
+		.k-block-container-type-text
+	)
+	> .k-global-block-marker {
+	margin-bottom: var(--spacing-3);
+}
+
+.k-global-block-container:is(
+		.k-block-container-type-gallery,
+		.k-block-container-type-image,
+		.k-block-container-type-text
+	)
+	> .k-global-block-marker {
+	margin-inline: 0;
+}
+
+.k-global-block-title {
+	cursor: text;
+}
+
+.k-global-block-marker > .k-global-block-title:last-child {
+	margin-inline: 0 auto;
+}
+
+.k-global-block-lock {
 	margin-inline-start: auto;
 }

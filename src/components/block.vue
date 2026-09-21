@@ -11,6 +11,7 @@
 		:data-batched="isBatched"
 		:data-disabled="isDisabled"
 		:data-global="Boolean(globalBlock)"
+		:data-global-locked="globalBlock?.lock?.isLocked === true"
 		:data-hidden="isHidden"
 		:data-id="id"
 		:data-last-selected="isLastSelected"
@@ -29,8 +30,10 @@
 	>
 		<div v-if="globalBlock" class="k-global-block-marker">
 			<k-icon type="global-block" />
-			<span>{{ globalBlock.title || $t("global-blocks.global") }}</span>
-			<k-icon v-if="globalBlock.lock?.isLocked" type="lock" />
+			<span class="k-global-block-title" @dblclick.stop="renameGlobal">
+				{{ globalBlock.title || $t("global-blocks.global") }}
+			</span>
+			<k-icon v-if="globalBlock.lock?.isLocked" class="k-global-block-lock" type="lock" />
 		</div>
 
 		<div :class="className" :data-disabled="isContentDisabled" class="k-block">
@@ -53,6 +56,7 @@
 				isBatched,
 				isEditable,
 				isFull,
+				isGlobalBlockEditor,
 				isHidden,
 				isMergable,
 				isRemovable: !isGlobalBlockEditor,
@@ -183,6 +187,46 @@ export default {
 				this.remove()
 			}
 		},
+		renameGlobal() {
+			if (this.globalBlock?.missing === true || this.globalBlock?.lock?.isLocked === true) {
+				return
+			}
+
+			this.$panel.dialog.open({
+				component: "k-form-dialog",
+				props: {
+					fields: {
+						title: {
+							icon: "title",
+							label: this.$t("title"),
+							preselect: true,
+							required: true,
+							type: "text"
+						}
+					},
+					submitButton: this.$t("rename"),
+					value: {
+						title: this.globalBlock.title
+					}
+				},
+				on: {
+					submit: async ({ title }) => {
+						try {
+							await this.$api.post(`${this.globalBlock.apiUrl}/changes/save`, { title }, { silent: true })
+							if ((await this.blocksOwner()?.renameGlobalBlock(this.globalBlock, title)) !== false) {
+								this.$panel.dialog.close()
+							}
+						} catch (error) {
+							if (error?.details?.isLocked) {
+								this.$panel.view.reload()
+								return
+							}
+							this.$panel.notification.error(error)
+						}
+					}
+				}
+			})
+		},
 		async onInput(value) {
 			if (!this.globalBlock) {
 				this.$emit("update", value)
@@ -200,8 +244,7 @@ export default {
 
 			try {
 				await this.$api.post(`${this.globalBlock.apiUrl}/changes/save`, { block: [block] }, { silent: true })
-				this.blocksOwner()?.trackGlobalBlock(this.globalBlock, block)
-				this.$emit("update", { ...content, _global: this.globalBlock })
+				await this.blocksOwner()?.updateGlobalBlock(this.id, content, this.globalBlock)
 			} catch (error) {
 				if (error?.details?.isLocked) {
 					this.$panel.view.reload()

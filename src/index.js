@@ -1,8 +1,9 @@
 import "./index.css"
 import BlockOptions from "./components/block-options.js"
 import Block from "./components/block.vue"
-import BlocksField from "./components/blocks-field.js"
+import BlocksField from "./components/blocks-field.vue"
 import Blocks from "./components/blocks.js"
+import GlobalBlockView from "./components/global-block-view.vue"
 import GlobalBlocksView from "./components/global-blocks-view.vue"
 import LayoutField from "./components/layout-field.js"
 
@@ -12,10 +13,11 @@ panel.plugin("tobimori/global-blocks", {
 		"k-block": Block,
 		"k-blocks": Blocks,
 		"k-blocks-field": BlocksField,
+		"k-global-block-view": GlobalBlockView,
 		"k-global-blocks-view": GlobalBlocksView,
 		"k-layout-field": LayoutField
 	},
 	icons: {
-		"global-block": `<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.93 6h-3.1a15.7 15.7 0 0 0-1.2-3.07A8.04 8.04 0 0 1 18.93 8ZM12 4c.83 1.2 1.47 2.54 1.88 4h-3.76A13.73 13.73 0 0 1 12 4ZM4.26 14a7.8 7.8 0 0 1 0-4h3.42a16.52 16.52 0 0 0 0 4H4.26Zm.81 2h3.1c.28 1.08.68 2.1 1.2 3.07A8.04 8.04 0 0 1 5.07 16Zm3.1-8h-3.1a8.04 8.04 0 0 1 4.3-3.07A15.7 15.7 0 0 0 8.17 8ZM12 20a13.73 13.73 0 0 1-1.88-4h3.76A13.73 13.73 0 0 1 12 20Zm2.32-6H9.68a14.52 14.52 0 0 1 0-4h4.64a14.52 14.52 0 0 1 0 4Zm.31 5.07c.52-.97.92-1.99 1.2-3.07h3.1a8.04 8.04 0 0 1-4.3 3.07ZM16.32 14a16.52 16.52 0 0 0 0-4h3.42a7.8 7.8 0 0 1 0 4h-3.42Z"/>`
+		"global-block": `<path d="M6.75 2.5C9.09721 2.5 11 4.40279 11 6.75V11H6.75C4.40279 11 2.5 9.09721 2.5 6.75C2.5 4.40279 4.40279 2.5 6.75 2.5ZM9 9V6.75C9 5.50736 7.99264 4.5 6.75 4.5C5.50736 4.5 4.5 5.50736 4.5 6.75C4.5 7.99264 5.50736 9 6.75 9H9ZM6.75 13H11V17.25C11 19.5972 9.09721 21.5 6.75 21.5C4.40279 21.5 2.5 19.5972 2.5 17.25C2.5 14.9028 4.40279 13 6.75 13ZM6.75 15C5.50736 15 4.5 16.0074 4.5 17.25C4.5 18.4926 5.50736 19.5 6.75 19.5C7.99264 19.5 9 18.4926 9 17.25V15H6.75ZM17.25 2.5C19.5972 2.5 21.5 4.40279 21.5 6.75C21.5 9.09721 19.5972 11 17.25 11H13V6.75C13 4.40279 14.9028 2.5 17.25 2.5ZM17.25 9C18.4926 9 19.5 7.99264 19.5 6.75C19.5 5.50736 18.4926 4.5 17.25 4.5C16.0074 4.5 15 5.50736 15 6.75V9H17.25ZM13 13H17.25C19.5972 13 21.5 14.9028 21.5 17.25C21.5 19.5972 19.5972 21.5 17.25 21.5C14.9028 21.5 13 19.5972 13 17.25V13ZM15 15V17.25C15 18.4926 16.0074 19.5 17.25 19.5C18.4926 19.5 19.5 18.4926 19.5 17.25C19.5 16.0074 18.4926 15 17.25 15H15Z"/>`
 	}
 })

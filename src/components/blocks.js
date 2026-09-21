@@ -49,6 +49,7 @@ export default {
 			}
 		}
 
+		this.restoreGlobalChanges()
 		this.$events.on("content.publish", this._publishGlobalBlocks)
 		this.$events.on("content.discard", this._discardGlobalBlocks)
 		window.addEventListener("beforeunload", this._unlockGlobalBlocks)
@@ -184,11 +185,58 @@ export default {
 				}
 			})
 		},
-		trackGlobalBlock(global, block) {
-			this.$set(this.changedGlobalBlocks, global.uuid, {
-				...global,
-				block
+		async renameGlobalBlock(global, title) {
+			this.trackGlobalBlock(global)
+			this.$set(global, "title", title)
+
+			for (const block of this.blocks) {
+				if (block.content?._global?.uuid === global.uuid) {
+					this.$set(block.content._global, "title", title)
+				}
+			}
+
+			for (const option of this.availableGlobalBlocks) {
+				if (option.uuid === global.uuid) {
+					this.$set(option, "title", title)
+				}
+			}
+
+			return this.saveParent()
+		},
+		restoreGlobalChanges() {
+			for (const block of this.blocks) {
+				const global = block.content?._global
+				if (global?.hasChanges === true && global.lock?.isLocked !== true) {
+					this.trackGlobalBlock(global, false)
+				}
+			}
+		},
+		async saveParent() {
+			this.save()
+			await this.$nextTick()
+
+			return this.$panel.content.update({}, {
+				api: `/${this.endpoints.model.replace(/^\//, "")}`,
+				language: this.$panel.language.code
 			})
+		},
+		trackGlobalBlock(global, revise = true) {
+			if (revise && this.changedGlobalBlocks[global.uuid] === undefined) {
+				this.$set(global, "revision", this.$helper.uuid())
+			}
+
+			this.$set(global, "hasChanges", true)
+			this.$set(this.changedGlobalBlocks, global.uuid, global)
+		},
+		async updateGlobalBlock(placementId, content, global) {
+			const index = this.findIndex(placementId)
+			if (index === -1) {
+				return false
+			}
+
+			this.trackGlobalBlock(global)
+			this.$set(this.blocks[index], "content", { ...content, _global: global })
+			return this.saveParent()
 		},
 		unlockGlobalBlocks() {
 			for (const global of Object.values(this.changedGlobalBlocks)) {

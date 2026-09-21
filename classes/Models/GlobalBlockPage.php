@@ -7,9 +7,12 @@ use Kirby\Cms\Blocks;
 use Kirby\Cms\Page;
 use Kirby\Cms\PageBlueprint;
 use Kirby\Content\Field;
+use Kirby\Content\VersionId;
 use Kirby\Exception\InvalidArgumentException;
+use Kirby\Panel\Page as PanelPage;
 use Kirby\Toolkit\Str;
 use tobimori\GlobalBlocks\GlobalBlocks;
+use tobimori\GlobalBlocks\Panel\GlobalBlockPagePanel;
 
 class GlobalBlockPage extends Page
 {
@@ -54,8 +57,8 @@ class GlobalBlockPage extends Page
 	public function blueprint(): PageBlueprint
 	{
 		return $this->blueprint ??= new PageBlueprint([
-			'buttons' => ['languages', 'settings'],
-			'image' => ['icon' => 'globe'],
+			'buttons' => ['preview', 'languages', 'settings'],
+			'image' => ['icon' => 'global-block'],
 			'model' => $this,
 			'name' => 'global-block',
 			'options' => [
@@ -69,7 +72,7 @@ class GlobalBlockPage extends Page
 				'duplicate' => false,
 				'list' => false,
 				'move' => false,
-				'preview' => false,
+				'preview' => GlobalBlocks::permission('access'),
 				'read' => GlobalBlocks::permission('access'),
 				'sort' => false,
 				'update' => GlobalBlocks::permission('update'),
@@ -94,20 +97,6 @@ class GlobalBlockPage extends Page
 						'sidebar' => [
 							'width' => '1/3',
 							'sections' => [
-								'meta' => [
-									'type' => 'fields',
-									'fields' => [
-										'title' => [
-											'label' => t('global-blocks.titleLabel') ?? 'Title',
-											'type' => 'text',
-										],
-										'description' => [
-											'label' => t('global-blocks.descriptionLabel') ?? 'Description',
-											'type' => 'textarea',
-											'buttons' => false,
-										],
-									],
-								],
 								'files' => [
 									'type' => 'files',
 								],
@@ -136,22 +125,54 @@ class GlobalBlockPage extends Page
 		return $relative ? $path : $this->kirby()->url('panel') . $path;
 	}
 
+	public function panel(): PanelPage
+	{
+		return new GlobalBlockPagePanel($this);
+	}
+
 	public function panelData(): array
 	{
-		$block = $this->blockForPanel();
+		$language = $this->kirby()->language()?->code() ?? 'default';
+		$hasChanges = $this->version('changes')->exists($language);
+		$version = $hasChanges ? 'changes' : 'latest';
+		$content = $this->version($version)->content($language);
+		$block = $this->block($version, $language);
 		$fieldset = $block ? GlobalBlocks::fieldset($block->type()) : null;
+		$title = $content->get('title')->value();
+		if ($title === '') {
+			$title = $fieldset?->name() ?? Str::ucfirst($block?->type() ?? 'text');
+		}
 
 		return [
 			'apiUrl' => $this->apiUrl(true),
-			'description' => $this->description()->value(),
+			'description' => $content->get('description')->value(),
 			'fieldEndpoint' => $this->apiUrl(true) . '/fields/block',
+			'hasChanges' => $hasChanges,
 			'icon' => $fieldset?->icon() ?? 'box',
 			'lock' => $this->lock()->toArray(),
 			'panelUrl' => $this->globalPanelUrl(true),
-			'title' => $this->title()->value(),
+			'title' => $title,
 			'type' => $block?->type(),
+			'typeName' => $fieldset?->name() ?? Str::ucfirst($block?->type() ?? 'text'),
 			'uuid' => $this->globalUuid(),
 		];
+	}
+
+	public function previewUrl(VersionId|string $versionId = 'latest'): ?string
+	{
+		$version = $this->version($versionId);
+
+		return (
+			rtrim($this->kirby()->url('index'), '/')
+			. '/global-block-preview/'
+			. $this->globalUuid()
+			. '?'
+			. http_build_query([
+				'_token' => $version->previewToken(),
+				'_version' => (string) $version->id(),
+				'language' => $this->kirby()->language()?->code(),
+			])
+		);
 	}
 
 	public function title(): Field

@@ -3,9 +3,12 @@
 		<k-header>
 			{{ $t("global-blocks.title") }}
 			<template #buttons>
-				<k-button v-if="canCreate" icon="add" variant="filled" @click="$dialog('global-blocks/create')">
-					{{ $t("global-blocks.create") }}
-				</k-button>
+				<k-view-button
+					v-if="canCreate"
+					:text="$t('global-blocks.create')"
+					icon="add"
+					@click="$dialog('global-blocks/create')"
+				/>
 			</template>
 		</k-header>
 

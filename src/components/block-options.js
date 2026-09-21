@@ -6,6 +6,7 @@ export default {
 			default: null
 		},
 		globalBlocksEnabled: Boolean,
+		isGlobalBlockEditor: Boolean,
 		isRemovable: {
 			type: Boolean,
 			default: true
@@ -14,6 +15,22 @@ export default {
 	emits: ["detachGlobal", "makeGlobal"],
 	computed: {
 		buttons() {
+			if (this.isGlobalBlockEditor) {
+				return [
+					{
+						when: this.isEditable,
+						icon: "edit",
+						title: this.$t("edit"),
+						click: () => this.$emit("open")
+					},
+					{
+						icon: "template",
+						title: this.$t("copy"),
+						click: () => this.$emit("copy")
+					}
+				]
+			}
+
 			if (this.isBatched) {
 				return [
 					{

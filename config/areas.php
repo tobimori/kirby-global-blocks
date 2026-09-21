@@ -1,6 +1,9 @@
 <?php
 
+use Kirby\Api\Controller\Changes;
 use Kirby\Cms\App;
+use Kirby\Cms\PageRules;
+use Kirby\Panel\Field;
 use tobimori\GlobalBlocks\GlobalBlocks;
 
 return [
@@ -10,13 +13,7 @@ return [
 		}
 
 		return [
-			'breadcrumb' => [
-				[
-					'label' => t('global-blocks.title') ?? 'Global blocks',
-					'link' => '/global-blocks',
-				],
-			],
-			'icon' => 'globe',
+			'icon' => 'global-block',
 			'label' => t('global-blocks.title') ?? 'Global blocks',
 			'menu' => true,
 			'views' => [
@@ -24,14 +21,19 @@ return [
 					'pattern' => 'global-blocks/(:any)',
 					'action' => function (string $uuid): array {
 						$global = GlobalBlocks::findOrFail($uuid);
+						$data = $global->panelData();
 						$view = $global->panel()->view();
+						$view['component'] = 'k-global-block-view';
 						$view['breadcrumb'] = [
 							[
-								'label' => $global->title()->value(),
+								'label' => $data['title'],
 								'link' => $global->globalPanelUrl(true),
 							],
 						];
 						$view['props']['link'] = $global->globalPanelUrl(true);
+						$view['props']['permissions']['changeTitle'] = GlobalBlocks::permission('update');
+						$view['props']['title'] = $data['title'];
+						$view['props']['titleDialog'] = 'global-blocks/' . $uuid . '/changeTitle';
 						$view['props']['model']['link'] = $global->globalPanelUrl(true);
 						$view['props']['model']['parent'] = '/global-blocks';
 						$view['props']['next'] = null;
@@ -57,7 +59,7 @@ return [
 												'back' => 'pattern',
 												'icon' => $data['icon'],
 											],
-											'info' => $data['description'] ?: $data['type'],
+											'info' => $data['typeName'],
 											'link' => $data['panelUrl'],
 											'text' => $data['title'],
 										];
@@ -71,6 +73,47 @@ return [
 				],
 			],
 			'dialogs' => [
+				'global-block.changeTitle' => [
+					'pattern' => 'global-blocks/(:any)/changeTitle',
+					'load' => function (string $uuid): array {
+						GlobalBlocks::authorize('update');
+						$data = GlobalBlocks::findOrFail($uuid)->panelData();
+
+						return [
+							'component' => 'k-form-dialog',
+							'props' => [
+								'fields' => [
+									'title' => Field::title([
+										'preselect' => true,
+										'required' => true,
+									]),
+									'description' => [
+										'buttons' => false,
+										'label' => t('description'),
+										'type' => 'textarea',
+									],
+								],
+								'submitButton' => t('change'),
+								'value' => [
+									'description' => $data['description'],
+									'title' => $data['title'],
+								],
+							],
+						];
+					},
+					'submit' => function (string $uuid): array {
+						GlobalBlocks::authorize('update');
+						$request = App::instance()->request();
+						$title = trim($request->get('title', ''));
+						PageRules::validateTitleLength($title);
+						Changes::save(GlobalBlocks::findOrFail($uuid), [
+							'description' => $request->get('description', ''),
+							'title' => $title,
+						]);
+
+						return ['event' => 'global-blocks.updated'];
+					},
+				],
 				'global-blocks/create' => [
 					'load' => function () {
 						GlobalBlocks::authorize('create');
