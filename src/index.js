@@ -1,10 +1,10 @@
 import "./index.css"
-import Block from "./components/Block.vue"
-import BlockOptions from "./components/BlockOptions.js"
-import Blocks from "./components/Blocks.js"
-import BlocksField from "./components/BlocksField.js"
-import GlobalBlocksView from "./components/GlobalBlocksView.vue"
-import LayoutField from "./components/LayoutField.js"
+import BlockOptions from "./components/block-options.js"
+import Block from "./components/block.vue"
+import BlocksField from "./components/blocks-field.js"
+import Blocks from "./components/blocks.js"
+import GlobalBlocksView from "./components/global-blocks-view.vue"
+import LayoutField from "./components/layout-field.js"
 
 panel.plugin("tobimori/global-blocks", {
 	components: {

@@ -1,0 +1,14 @@
+#:schema vendor/carthage-software/mago/schema.json
+
+version = "1"
+php-version = "8.3"
+
+[source]
+paths = ["classes", "config", "index.php"]
+includes = ["vendor"]
+
+[source.glob]
+literal-separator = true
+
+[formatter]
+use-tabs = true

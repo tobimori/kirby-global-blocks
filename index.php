@@ -24,8 +24,8 @@ use tobimori\GlobalBlocks\Models\GlobalBlockPage;
 use tobimori\GlobalBlocks\Models\GlobalBlocksPage;
 
 if (
-	version_compare(App::version() ?? '0.0.0', '5.5.0', '<') ||
-	version_compare(App::version() ?? '0.0.0', '6.0.0', '>=')
+	version_compare(App::version() ?? '0.0.0', '5.5.0', '<')
+	|| version_compare(App::version() ?? '0.0.0', '6.0.0', '>=')
 ) {
 	throw new Exception('Kirby Global Blocks requires Kirby 5.5');
 }
@@ -52,15 +52,12 @@ App::plugin('tobimori/global-blocks', [
 		'update' => true,
 		'delete' => true,
 	],
-	'translations' => A::keyBy(
-		A::map(Dir::files(__DIR__ . '/translations'), function (string $file): array {
-			$translations = [];
-			foreach (Json::read(__DIR__ . '/translations/' . $file) as $key => $value) {
-				$translations['global-blocks.' . $key] = $value;
-			}
+	'translations' => A::keyBy(A::map(Dir::files(__DIR__ . '/translations'), function (string $file): array {
+		$translations = [];
+		foreach (Json::read(__DIR__ . '/translations/' . $file) as $key => $value) {
+			$translations['global-blocks.' . $key] = $value;
+		}
 
-			return A::merge(['lang' => F::name($file)], $translations);
-		}),
-		'lang'
-	),
+		return A::merge(['lang' => F::name($file)], $translations);
+	}), 'lang'),
 ]);

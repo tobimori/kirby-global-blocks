@@ -54,10 +54,7 @@ trait HasGlobalBlocks
 		$routes[] = [
 			'pattern' => 'global-blocks/(:any)',
 			'method' => 'GET',
-			'action' => fn (string $uuid) => $field->expandedReference(
-				GlobalBlocks::findOrFail($uuid),
-				Str::uuid()
-			),
+			'action' => fn(string $uuid) => $field->expandedReference(GlobalBlocks::findOrFail($uuid), Str::uuid()),
 		];
 
 		$routes[] = [
@@ -71,29 +68,19 @@ trait HasGlobalBlocks
 				}
 
 				$field->fieldset($block['type'] ?? '');
-				$global = GlobalBlocks::create(
-					type: $block['type'],
-					content: array_diff_key($block['content'] ?? [], ['_global' => null]),
-					title: $request->get('title'),
-					description: $request->get('description')
-				);
+				$global = GlobalBlocks::create(type: $block['type'], content: array_diff_key($block['content'] ?? [], [
+					'_global' => null,
+				]), title: $request->get('title'), description: $request->get('description'));
 
-				return $field->expandedReference(
-					$global,
-					$block['id'] ?? Str::uuid(),
-					$block['isHidden'] ?? false
-				);
+				return $field->expandedReference($global, $block['id'] ?? Str::uuid(), $block['isHidden'] ?? false);
 			},
 		];
 
 		return $routes;
 	}
 
-	public function expandedReference(
-		GlobalBlockPage $global,
-		string $placementId,
-		bool $isHidden = false
-	): array {
+	public function expandedReference(GlobalBlockPage $global, string $placementId, bool $isHidden = false): array
+	{
 		$source = $global->blockForPanel();
 		if ($source === null) {
 			return $this->missingReference($global->globalUuid(), $placementId, $isHidden);
@@ -118,7 +105,11 @@ trait HasGlobalBlocks
 				$global = GlobalBlocks::find($block['content']['uuid']);
 				$result[] = $global
 					? $this->expandedReference($global, $block['id'] ?? Str::uuid(), $block['isHidden'] ?? false)
-					: $this->missingReference($block['content']['uuid'], $block['id'] ?? Str::uuid(), $block['isHidden'] ?? false);
+					: $this->missingReference(
+						$block['content']['uuid'],
+						$block['id'] ?? Str::uuid(),
+						$block['isHidden'] ?? false,
+					);
 				continue;
 			}
 
@@ -132,7 +123,10 @@ trait HasGlobalBlocks
 	{
 		$options = [];
 		foreach (GlobalBlocks::items() as $global) {
-			if ($global instanceof GlobalBlockPage === false || $this->fieldsets()->find($global->blockType()) === null) {
+			if (
+				$global instanceof GlobalBlockPage === false
+				|| $this->fieldsets()->find($global->blockType()) === null
+			) {
 				continue;
 			}
 
@@ -158,7 +152,7 @@ trait HasGlobalBlocks
 		];
 	}
 
-	protected function referenceFromExpanded(array $block): array|null
+	protected function referenceFromExpanded(array $block): ?array
 	{
 		$global = $block['content']['_global'] ?? null;
 		if (is_array($global) === false || is_string($global['uuid'] ?? null) === false) {

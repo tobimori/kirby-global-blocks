@@ -112,7 +112,7 @@ return [
 						$global = GlobalBlocks::createWithDefaults(
 							type: $request->get('type'),
 							title: $request->get('title'),
-							description: $request->get('description')
+							description: $request->get('description'),
 						);
 
 						return [

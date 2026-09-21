@@ -13,7 +13,7 @@ use tobimori\GlobalBlocks\GlobalBlocks;
 
 class GlobalBlockPage extends Page
 {
-	public function block(string|null $version = null, string|null $language = null): Block|null
+	public function block(?string $version = null, ?string $language = null): ?Block
 	{
 		$version ??= 'latest';
 		$language ??= 'current';
@@ -24,7 +24,7 @@ class GlobalBlockPage extends Page
 		])->first();
 	}
 
-	public function blockForPanel(): Block|null
+	public function blockForPanel(): ?Block
 	{
 		$language = $this->kirby()->language()?->code() ?? 'default';
 		$version = $this->version('changes')->exists($language) ? 'changes' : 'latest';
@@ -36,14 +36,14 @@ class GlobalBlockPage extends Page
 		return $this->blockForPanel()?->type() ?? 'text';
 	}
 
-	public function contentFileData(array $data, string|null $languageCode = null): array
+	public function contentFileData(array $data, ?string $languageCode = null): array
 	{
 		$data = parent::contentFileData($data, $languageCode);
 		$blocks = Blocks::parse($data['block'] ?? null);
 
 		if (count($blocks) !== 1 || isset($blocks[0]) === false) {
 			throw new InvalidArgumentException(
-				t('global-blocks.singleBlock') ?? 'A global block must contain exactly one block.'
+				t('global-blocks.singleBlock') ?? 'A global block must contain exactly one block.',
 			);
 		}
 

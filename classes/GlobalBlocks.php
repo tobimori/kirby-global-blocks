@@ -19,7 +19,7 @@ use tobimori\GlobalBlocks\Models\GlobalBlocksPage;
 
 class GlobalBlocks
 {
-	protected static GlobalBlocksPage|null $container = null;
+	protected static ?GlobalBlocksPage $container = null;
 
 	public static function container(): GlobalBlocksPage
 	{
@@ -39,8 +39,8 @@ class GlobalBlocks
 	public static function create(
 		string $type,
 		array $content = [],
-		string|null $title = null,
-		string|null $description = null
+		?string $title = null,
+		?string $description = null,
 	): GlobalBlockPage {
 		static::authorize('create');
 		static::fieldset($type);
@@ -77,26 +77,17 @@ class GlobalBlocks
 
 	public static function createWithDefaults(
 		string $type,
-		string|null $title = null,
-		string|null $description = null
+		?string $title = null,
+		?string $description = null,
 	): GlobalBlockPage {
 		$fieldset = static::fieldset($type);
-		$form = new \Kirby\Form\Form(
-			fields: $fieldset->fields(),
-			model: App::instance()->site(),
-			language: 'current'
-		);
+		$form = new \Kirby\Form\Form(fields: $fieldset->fields(), model: App::instance()->site(), language: 'current');
 		$form->fill(input: $form->defaults());
 
-		return static::create(
-			type: $type,
-			content: $form->toStoredValues(),
-			title: $title,
-			description: $description
-		);
+		return static::create(type: $type, content: $form->toStoredValues(), title: $title, description: $description);
 	}
 
-	public static function find(string $uuid): GlobalBlockPage|null
+	public static function find(string $uuid): ?GlobalBlockPage
 	{
 		if (static::validUuid($uuid) === false) {
 			return null;
@@ -113,11 +104,12 @@ class GlobalBlocks
 
 	public static function fieldset(string $type): Fieldset
 	{
-		return static::fieldsets()->find($type)
-			?? throw new InvalidArgumentException('Unknown block type "' . $type . '"');
+		return (
+			static::fieldsets()->find($type) ?? throw new InvalidArgumentException('Unknown block type "' . $type . '"')
+		);
 	}
 
-	public static function fieldsets(Page|null $parent = null): Fieldsets
+	public static function fieldsets(?Page $parent = null): Fieldsets
 	{
 		$definitions = App::instance()->option('tobimori.global-blocks.fieldsets');
 		if (is_array($definitions) === false) {
@@ -151,12 +143,9 @@ class GlobalBlocks
 			}
 		}
 
-		$fieldsets = Fieldsets::factory(
-			$definitions,
-			['parent' => $parent ?? App::instance()->site()]
-		);
+		$fieldsets = Fieldsets::factory($definitions, ['parent' => $parent ?? App::instance()->site()]);
 
-		foreach ((array)App::instance()->option('tobimori.global-blocks.fieldsetsIgnore', []) as $type) {
+		foreach ((array) App::instance()->option('tobimori.global-blocks.fieldsetsIgnore', []) as $type) {
 			$fieldsets->remove($type);
 		}
 
@@ -167,14 +156,22 @@ class GlobalBlocks
 	{
 		$pages = new Pages([], static::container());
 		foreach (Dir::dirs(static::root()) as $directory) {
-			if (static::validUuid($directory) && is_file(static::root() . '/' . $directory . '/global-block.' . App::instance()->contentExtension())) {
+			if (
+				static::validUuid($directory)
+				&& is_file(static::root() . '/' . $directory . '/global-block.' . App::instance()->contentExtension())
+			) {
 				$pages->append($directory, static::make($directory));
 				continue;
 			}
 
 			if (static::validUuid($directory) && App::instance()->multilang()) {
 				foreach (App::instance()->languages() as $language) {
-					if (is_file(static::root() . '/' . $directory . '/global-block.' . $language->code() . '.' . App::instance()->contentExtension())) {
+					if (
+						is_file(
+							static::root() . '/' . $directory . '/global-block.' . $language->code() . '.'
+								. App::instance()->contentExtension(),
+						)
+					) {
 						$pages->append($directory, static::make($directory));
 						break;
 					}
@@ -198,10 +195,7 @@ class GlobalBlocks
 
 	public static function permission(string $action): bool
 	{
-		return App::instance()->user()?->role()->permissions()->for(
-			'tobimori.global-blocks',
-			$action
-		) ?? false;
+		return App::instance()->user()?->role()->permissions()->for('tobimori.global-blocks', $action) ?? false;
 	}
 
 	public static function authorize(string $action): void
@@ -219,9 +213,7 @@ class GlobalBlocks
 			}
 
 			$path[] = $current;
-			$data = $current === $uuid
-				? $block
-				: static::find($current)?->blockForPanel()?->toArray();
+			$data = $current === $uuid ? $block : static::find($current)?->blockForPanel()?->toArray();
 
 			if ($data === null) {
 				return;
@@ -259,10 +251,7 @@ class GlobalBlocks
 				return;
 			}
 
-			if (
-				($item['type'] ?? null) === 'global' &&
-				is_string($item['content']['uuid'] ?? null)
-			) {
+			if (($item['type'] ?? null) === 'global' && is_string($item['content']['uuid'] ?? null)) {
 				$references[] = $item['content']['uuid'];
 			}
 
@@ -277,8 +266,7 @@ class GlobalBlocks
 
 	public static function root(): string
 	{
-		return App::instance()->option('tobimori.global-blocks.root')
-			?? App::instance()->root('content') . '/_global';
+		return App::instance()->option('tobimori.global-blocks.root') ?? App::instance()->root('content') . '/_global';
 	}
 
 	public static function usages(string $uuid): array
@@ -320,9 +308,6 @@ class GlobalBlocks
 
 	public static function validUuid(string $uuid): bool
 	{
-		return preg_match(
-			'/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
-			$uuid
-		) === 1;
+		return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $uuid) === 1;
 	}
 }

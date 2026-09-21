@@ -13,9 +13,11 @@ return [
 		}
 
 		if (
-			is_string($path) &&
-			preg_match('!^pages/_global\+([^/]+)$!', $path, $matches) === 1 &&
-			($global = GlobalBlocks::find($matches[1]))
+			is_string($path) && preg_match(
+				'!^pages/_global\+([^/]+)$!',
+				$path,
+				$matches,
+			) === 1 && ($global = GlobalBlocks::find($matches[1]))
 		) {
 			Panel::go($global->globalPanelUrl());
 		}
@@ -34,8 +36,7 @@ return [
 
 		if (GlobalBlocks::usages($page->globalUuid()) !== []) {
 			throw new PermissionException(
-				t('global-blocks.deleteReferenced')
-					?? 'This global block is still used and cannot be deleted.'
+				t('global-blocks.deleteReferenced') ?? 'This global block is still used and cannot be deleted.',
 			);
 		}
 	},
@@ -46,10 +47,7 @@ return [
 		}
 	},
 	'route:after' => function ($path, $method, $result) {
-		if (
-			$method === 'POST' &&
-			preg_match('!/pages/_global\+[^/]+/changes/publish$!', $path)
-		) {
+		if ($method === 'POST' && preg_match('!/pages/_global\+[^/]+/changes/publish$!', $path)) {
 			kirby()->cache('pages')->flush();
 		}
 

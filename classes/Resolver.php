@@ -22,20 +22,17 @@ class Resolver
 		} catch (\Throwable $exception) {
 			throw new InvalidArgumentException(
 				message: 'Invalid blocks data for "' . $field->key() . '" field',
-				previous: $exception
+				previous: $exception,
 			);
 		}
 	}
 
 	public static function layouts(Field $field): Layouts
 	{
-		return Layouts::factory(
-			static::resolve(Layouts::parse($field->value())),
-			[
-				'field' => $field,
-				'parent' => $field->parent(),
-			]
-		);
+		return Layouts::factory(static::resolve(Layouts::parse($field->value())), [
+			'field' => $field,
+			'parent' => $field->parent(),
+		]);
 	}
 
 	public static function resolve(array $value): array
@@ -67,7 +64,7 @@ class Resolver
 		return $result;
 	}
 
-	public static function block(array $block): array|null
+	public static function block(array $block): ?array
 	{
 		if (static::isReference($block) === false) {
 			return $block;
@@ -88,7 +85,6 @@ class Resolver
 
 	public static function isReference(array $block): bool
 	{
-		return ($block['type'] ?? null) === 'global'
-			&& is_string($block['content']['uuid'] ?? null);
+		return ($block['type'] ?? null) === 'global' && is_string($block['content']['uuid'] ?? null);
 	}
 }
