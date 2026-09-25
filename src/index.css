@@ -61,3 +61,8 @@
 .k-global-block-lock {
 	margin-inline-start: auto;
 }
+
+/* pasted blocks cannot become global blocks here */
+.k-global-blocks-selector .k-clipboard-hint {
+	display: none;
+}

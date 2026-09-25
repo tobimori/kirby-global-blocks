@@ -13,6 +13,7 @@ use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\NotFoundException;
 use Kirby\Filesystem\Dir;
 use Kirby\Filesystem\F;
+use Kirby\Toolkit\A;
 use Kirby\Toolkit\Str;
 use tobimori\GlobalBlocks\Models\GlobalBlockPage;
 use tobimori\GlobalBlocks\Models\GlobalBlocksPage;
@@ -126,18 +127,21 @@ class GlobalBlocks
 				'video',
 			]);
 
-			foreach (Dir::files(App::instance()->root('blueprints') . '/blocks') as $file) {
-				$name = F::name($file);
-				if (str_starts_with($name, '_') === false && in_array($name, $definitions, true) === false) {
-					$definitions[] = $name;
-				}
-			}
-
-			foreach (array_keys(App::instance()->extensions('blueprints')) as $name) {
-				if (str_starts_with($name, 'blocks/')) {
-					$name = substr($name, 7);
-					if (in_array($name, $definitions, true) === false) {
+			// a grouped config is complete, discovered blueprints are only added to a flat list
+			if (A::some($definitions, fn($definition) => ($definition['type'] ?? null) === 'group') === false) {
+				foreach (Dir::files(App::instance()->root('blueprints') . '/blocks') as $file) {
+					$name = F::name($file);
+					if (str_starts_with($name, '_') === false && in_array($name, $definitions, true) === false) {
 						$definitions[] = $name;
+					}
+				}
+
+				foreach (array_keys(App::instance()->extensions('blueprints')) as $name) {
+					if (str_starts_with($name, 'blocks/')) {
+						$name = substr($name, 7);
+						if (in_array($name, $definitions, true) === false) {
+							$definitions[] = $name;
+						}
 					}
 				}
 			}

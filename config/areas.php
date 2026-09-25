@@ -2,7 +2,6 @@
 
 use Kirby\Api\Controller\Changes;
 use Kirby\Cms\App;
-use Kirby\Cms\PageRules;
 use Kirby\Panel\Field;
 use tobimori\GlobalBlocks\GlobalBlocks;
 
@@ -32,7 +31,8 @@ return [
 						];
 						$view['props']['link'] = $global->globalPanelUrl(true);
 						$view['props']['permissions']['changeTitle'] = GlobalBlocks::permission('update');
-						$view['props']['title'] = $data['title'];
+						$view['props']['placeholder'] = $data['typeName'];
+						$view['props']['title'] = $data['titleValue'];
 						$view['props']['titleDialog'] = 'global-blocks/' . $uuid . '/changeTitle';
 						$view['props']['model']['link'] = $global->globalPanelUrl(true);
 						$view['props']['model']['parent'] = '/global-blocks';
@@ -84,8 +84,8 @@ return [
 							'props' => [
 								'fields' => [
 									'title' => Field::title([
+										'placeholder' => $data['typeName'],
 										'preselect' => true,
-										'required' => true,
 									]),
 									'description' => [
 										'buttons' => false,
@@ -96,7 +96,7 @@ return [
 								'submitButton' => t('change'),
 								'value' => [
 									'description' => $data['description'],
-									'title' => $data['title'],
+									'title' => $data['titleValue'],
 								],
 							],
 						];
@@ -104,11 +104,9 @@ return [
 					'submit' => function (string $uuid): array {
 						GlobalBlocks::authorize('update');
 						$request = App::instance()->request();
-						$title = trim($request->get('title', ''));
-						PageRules::validateTitleLength($title);
 						Changes::save(GlobalBlocks::findOrFail($uuid), [
 							'description' => $request->get('description', ''),
-							'title' => $title,
+							'title' => trim($request->get('title', '')),
 						]);
 
 						return ['event' => 'global-blocks.updated'];
@@ -117,46 +115,23 @@ return [
 				'global-blocks/create' => [
 					'load' => function () {
 						GlobalBlocks::authorize('create');
-						$options = [];
-						foreach (GlobalBlocks::fieldsets() as $fieldset) {
-							$options[] = [
-								'text' => $fieldset->name(),
-								'value' => $fieldset->type(),
-							];
-						}
+						$fieldsets = GlobalBlocks::fieldsets();
 
 						return [
-							'component' => 'k-form-dialog',
+							'component' => 'k-block-selector',
 							'props' => [
-								'fields' => [
-									'type' => [
-										'empty' => false,
-										'label' => t('global-blocks.typeLabel'),
-										'options' => $options,
-										'required' => true,
-										'type' => 'select',
-									],
-									'title' => [
-										'label' => t('global-blocks.titleLabel'),
-										'type' => 'text',
-									],
-									'description' => [
-										'buttons' => false,
-										'label' => t('global-blocks.descriptionLabel'),
-										'type' => 'textarea',
-									],
-								],
-								'submitButton' => t('global-blocks.create'),
+								'class' => 'k-global-blocks-selector',
+								'fieldsetGroups' => $fieldsets->groups() ?: null,
+								'fieldsets' => $fieldsets->toArray(fn($fieldset) => [
+									'icon' => $fieldset->icon(),
+									'name' => $fieldset->name(),
+									'type' => $fieldset->type(),
+								]),
 							],
 						];
 					},
 					'submit' => function () {
-						$request = App::instance()->request();
-						$global = GlobalBlocks::createWithDefaults(
-							type: $request->get('type'),
-							title: $request->get('title'),
-							description: $request->get('description'),
-						);
+						$global = GlobalBlocks::createWithDefaults(type: App::instance()->request()->get('type'));
 
 						return [
 							'event' => 'global-blocks.created',

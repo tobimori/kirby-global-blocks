@@ -9,7 +9,6 @@
 	"blockTypes": "Block types",
 	"titleLabel": "Title",
 	"descriptionLabel": "Description",
-	"typeLabel": "Block type",
 	"empty": "No global blocks yet",
 	"missing": "The global block does not exist",
 	"deleteReferenced": "This global block is still used and cannot be deleted.",

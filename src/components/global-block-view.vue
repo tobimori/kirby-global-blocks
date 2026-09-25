@@ -10,7 +10,8 @@
 			class="k-page-view-header"
 			@edit="$dialog(titleDialog)"
 		>
-			{{ title }}
+			<template v-if="title">{{ title }}</template>
+			<span v-else class="k-header-title-placeholder">{{ placeholder }} …</span>
 
 			<template #buttons>
 				<k-view-buttons :buttons="buttons">
@@ -49,6 +50,7 @@
 export default {
 	extends: "k-page-view",
 	props: {
+		placeholder: String,
 		titleDialog: String
 	}
 }

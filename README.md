@@ -86,7 +86,7 @@ return [
         // Optional storage root
         'root' => null,
 
-        // Optional global block type allowlist
+        // Optional global block type allowlist, supports groups like the blocks field
         'fieldsets' => null,
 
         // Block types to exclude from the central create dialog
