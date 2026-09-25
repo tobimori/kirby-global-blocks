@@ -138,7 +138,7 @@ class GlobalBlockPage extends Page
 		$content = $this->version($version)->content($language);
 		$block = $this->block($version, $language);
 		$fieldset = $block ? GlobalBlocks::fieldset($block->type()) : null;
-		$title = $content->get('title')->value();
+		$title = $content->get('title')->value() ?? '';
 		$typeName = $fieldset?->name() ?? Str::ucfirst($block?->type() ?? 'text');
 
 		return [
@@ -149,6 +149,7 @@ class GlobalBlockPage extends Page
 			'icon' => $fieldset?->icon() ?? 'box',
 			'lock' => $this->lock()->toArray(),
 			'panelUrl' => $this->globalPanelUrl(true),
+			'previewUrl' => $this->previewUrl($version),
 			'title' => $title !== '' ? $title : $typeName,
 			'titleValue' => $title,
 			'type' => $block?->type(),

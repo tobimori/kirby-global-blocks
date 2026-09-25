@@ -6,7 +6,6 @@
 	"detach": "Detach from global block",
 	"global": "Global block",
 	"globalPlural": "Global blocks",
-	"blockTypes": "Block types",
 	"titleLabel": "Title",
 	"descriptionLabel": "Description",
 	"empty": "No global blocks yet",

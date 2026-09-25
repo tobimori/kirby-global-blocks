@@ -12,7 +12,20 @@
 			</template>
 		</k-header>
 
-		<k-collection v-if="items.length" :items="items" />
+		<div v-if="items.length" class="k-items k-cards-items" data-layout="cards" data-size="medium">
+			<k-item
+				v-for="item in items"
+				:key="item.id"
+				:info="item.info"
+				:link="item.link"
+				:text="item.text"
+				layout="cards"
+			>
+				<template #image>
+					<k-global-block-preview :src="item.preview" />
+				</template>
+			</k-item>
+		</div>
 		<k-empty v-else :disabled="!canCreate" icon="global-block" @click="create">
 			{{ $t("global-blocks.empty") }}
 		</k-empty>

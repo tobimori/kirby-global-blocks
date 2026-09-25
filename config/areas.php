@@ -55,12 +55,10 @@ return [
 										$data = $global->panelData();
 										$items[] = [
 											'id' => $data['uuid'],
-											'image' => [
-												'back' => 'pattern',
-												'icon' => $data['icon'],
-											],
-											'info' => $data['typeName'],
+											// untitled blocks use the type name as title
+											'info' => $data['title'] !== $data['typeName'] ? $data['typeName'] : null,
 											'link' => $data['panelUrl'],
+											'preview' => $data['previewUrl'],
 											'text' => $data['title'],
 										];
 									}
@@ -135,7 +133,7 @@ return [
 
 						return [
 							'event' => 'global-blocks.created',
-							'go' => $global->globalPanelUrl(true),
+							'redirect' => $global->globalPanelUrl(true),
 						];
 					},
 				],

@@ -66,3 +66,122 @@
 .k-global-blocks-selector .k-clipboard-hint {
 	display: none;
 }
+
+.k-global-block-preview {
+	--ratio: 16/10;
+
+	align-items: flex-start;
+	justify-content: flex-start;
+	background: var(--color-white);
+}
+
+.k-global-block-preview iframe {
+	flex-shrink: 0;
+	width: calc(100% / var(--scale));
+	height: calc(100% / var(--scale));
+	border: 0;
+	transform: scale(var(--scale));
+	transform-origin: 0 0;
+	pointer-events: none;
+}
+
+/* the dialog is a transparent frame, each column looks like its own dialog */
+.k-dialog.k-global-block-selector-split {
+	--dialog-width: 61.5rem;
+
+	background: none;
+	box-shadow: none;
+	overflow: visible;
+
+	/* clicks in the gap go to the backdrop and close the dialog */
+	pointer-events: none;
+}
+
+.k-global-block-selector-split .k-dialog-body {
+	padding: 0;
+	overflow: visible;
+}
+
+.k-global-block-selector-split .k-global-block-selector-columns {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--spacing-6);
+	align-items: center;
+}
+
+.k-global-block-selector-split .k-global-block-selector-columns > * {
+	max-height: calc(100dvh - var(--dialog-margin) * 2);
+	overflow-y: auto;
+	padding: var(--dialog-padding);
+	pointer-events: auto;
+	background: var(--dialog-color-back);
+	box-shadow: var(--dialog-shadow);
+	border-radius: var(--dialog-rounded);
+}
+
+/* stacked columns scroll together in the dialog body */
+@container (max-width: 44rem) {
+	.k-global-block-selector-split .k-global-block-selector-columns {
+		grid-template-columns: 1fr;
+	}
+
+	.k-global-block-selector-split .k-dialog-body {
+		overflow-y: auto;
+	}
+
+	.k-global-block-selector-split .k-global-block-selector-columns > * {
+		max-height: none;
+	}
+}
+
+.k-global-block-selector-label {
+	font-size: var(--text-xs);
+	font-weight: normal;
+	color: var(--color-text-dimmed);
+}
+
+.k-global-block-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+	gap: var(--spacing-3);
+	margin-top: 0.75rem;
+}
+
+.k-global-block-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	background: var(--item-color-back);
+	box-shadow: var(--item-shadow);
+	border-radius: var(--rounded);
+}
+
+.k-global-block-card:has(:focus-visible) {
+	outline: var(--outline);
+}
+
+.k-global-block-card .k-global-block-preview {
+	border-start-start-radius: var(--rounded);
+	border-start-end-radius: var(--rounded);
+}
+
+.k-global-block-card-content {
+	line-height: 1.25;
+	padding: var(--spacing-2);
+}
+
+.k-global-block-card-button {
+	text-align: start;
+	outline: none;
+}
+
+.k-global-block-card-button::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.k-global-block-card-info {
+	margin-top: 0.125em;
+	color: var(--color-text-dimmed);
+}

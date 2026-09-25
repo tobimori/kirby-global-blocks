@@ -87,43 +87,16 @@ export default {
 			this.changedGlobalBlocks = {}
 		},
 		choose(index) {
-			const globalFieldsets = {}
-			const globalKeys = []
-			for (const global of this.availableGlobalBlocks) {
-				const key = `global:${global.uuid}`
-				globalKeys.push(key)
-				globalFieldsets[key] = {
-					icon: "global-block",
-					name: global.title,
-					type: key
-				}
-			}
-
-			const regularGroups = this.fieldsetGroups ?? {
-				blocks: {
-					label: this.$t("global-blocks.blockTypes"),
-					sets: Object.keys(this.fieldsets)
-				}
-			}
-			const groups = globalKeys.length
-				? {
-						globalBlocks: {
-							label: this.$t("global-blocks.globalPlural"),
-							sets: globalKeys
-						},
-						...regularGroups
-					}
-				: regularGroups
-
-			if (Object.keys(this.fieldsets).length === 1 && globalKeys.length === 0) {
+			if (Object.keys(this.fieldsets).length === 1 && this.availableGlobalBlocks.length === 0) {
 				return this.add(Object.values(this.fieldsets)[0].type, index)
 			}
 
 			this.$panel.dialog.open({
-				component: "k-block-selector",
+				component: "k-global-block-selector",
 				props: {
-					fieldsetGroups: groups,
-					fieldsets: { ...globalFieldsets, ...this.fieldsets }
+					fieldsetGroups: this.fieldsetGroups,
+					fieldsets: this.fieldsets,
+					globalBlocks: this.availableGlobalBlocks
 				},
 				on: {
 					submit: (type) => {

@@ -3,6 +3,8 @@ import BlockOptions from "./components/block-options.js"
 import Block from "./components/block.vue"
 import BlocksField from "./components/blocks-field.vue"
 import Blocks from "./components/blocks.js"
+import GlobalBlockPreview from "./components/global-block-preview.vue"
+import GlobalBlockSelector from "./components/global-block-selector.vue"
 import GlobalBlockView from "./components/global-block-view.vue"
 import GlobalBlocksView from "./components/global-blocks-view.vue"
 import LayoutField from "./components/layout-field.js"
@@ -13,6 +15,8 @@ panel.plugin("tobimori/global-blocks", {
 		"k-block": Block,
 		"k-blocks": Blocks,
 		"k-blocks-field": BlocksField,
+		"k-global-block-preview": GlobalBlockPreview,
+		"k-global-block-selector": GlobalBlockSelector,
 		"k-global-block-view": GlobalBlockView,
 		"k-global-blocks-view": GlobalBlocksView,
 		"k-layout-field": LayoutField
