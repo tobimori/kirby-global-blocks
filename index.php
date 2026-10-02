@@ -27,7 +27,7 @@ if (
 	version_compare(App::version() ?? '0.0.0', '5.5.0', '<')
 	|| version_compare(App::version() ?? '0.0.0', '6.0.0', '>=')
 ) {
-	throw new Exception('Kirby Global Blocks requires Kirby 5.5');
+	throw new Exception('Kirby Global Blocks requires Kirby 5.5 or newer (Kirby 5)');
 }
 
 App::plugin('tobimori/global-blocks', [

@@ -2,9 +2,11 @@
 
 Reusable global blocks for Kirby 5 blocks and layout fields.
 
+**Supports Kirby 5.5 and newer (Kirby 5).**
+
 ## Requirements
 
-- Kirby 5.5
+- Kirby 5.5 or newer, below Kirby 6
 - PHP 8.3 or newer
 
 ## Field blueprint

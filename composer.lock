@@ -4,8 +4,120 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "31a76a4497fcafff1e64847a364be672",
+    "content-hash": "e6638057dcd3ddfaeb21afc6edc5a36e",
     "packages": [
+        {
+            "name": "getkirby/composer-installer",
+            "version": "1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/getkirby/composer-installer.git",
+                "reference": "c98ece30bfba45be7ce457e1102d1b169d922f3d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/getkirby/composer-installer/zipball/c98ece30bfba45be7ce457e1102d1b169d922f3d",
+                "reference": "c98ece30bfba45be7ce457e1102d1b169d922f3d",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0 || ^2.0"
+            },
+            "require-dev": {
+                "composer/composer": "^1.8 || ^2.0"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Kirby\\ComposerInstaller\\Plugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kirby\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Kirby's custom Composer installer for the Kirby CMS and for Kirby plugins",
+            "homepage": "https://getkirby.com",
+            "support": {
+                "issues": "https://github.com/getkirby/composer-installer/issues",
+                "source": "https://github.com/getkirby/composer-installer/tree/1.2.1"
+            },
+            "funding": [
+                {
+                    "url": "https://getkirby.com/buy",
+                    "type": "custom"
+                }
+            ],
+            "time": "2020-12-28T12:54:39+00:00"
+        }
+    ],
+    "packages-dev": [
+        {
+            "name": "carthage-software/mago",
+            "version": "1.51.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/carthage-software/mago.git",
+                "reference": "9a62f0a1829490dcff31f62808589f7ab86779b5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/9a62f0a1829490dcff31f62808589f7ab86779b5",
+                "reference": "9a62f0a1829490dcff31f62808589f7ab86779b5",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4 || ~8.5 || ~8.6",
+                "revolt/event-loop": "^1.0.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "suggest": {
+                "ext-curl": "To show binary download progress"
+            },
+            "bin": [
+                "composer/bin/mago"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "composer/src/functions.php",
+                    "composer/src/internal.php"
+                ],
+                "psr-4": {
+                    "Mago\\": "composer/src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT OR Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Seifeddine Gmati",
+                    "email": "azjezz@carthage.software"
+                }
+            ],
+            "description": "Mago is a toolchain for PHP that aims to provide a set of tools to help developers write better code.",
+            "keywords": [
+                "dev"
+            ],
+            "support": {
+                "issues": "https://github.com/carthage-software/mago/issues",
+                "source": "https://github.com/carthage-software/mago/tree/1.51.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/azjezz",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-10-01T20:37:34+00:00"
+        },
         {
             "name": "christian-riesen/base32",
             "version": "1.6.0",
@@ -385,16 +497,16 @@
         },
         {
             "name": "getkirby/cms",
-            "version": "5.5.3",
+            "version": "5.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getkirby/kirby.git",
-                "reference": "46daf74851b8ad5438112f365d1dbaf74504ef88"
+                "reference": "3647b786bfd14b99c64a3fcee8644baf88476533"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getkirby/kirby/zipball/46daf74851b8ad5438112f365d1dbaf74504ef88",
-                "reference": "46daf74851b8ad5438112f365d1dbaf74504ef88",
+                "url": "https://api.github.com/repos/getkirby/kirby/zipball/3647b786bfd14b99c64a3fcee8644baf88476533",
+                "reference": "3647b786bfd14b99c64a3fcee8644baf88476533",
                 "shasum": ""
             },
             "require": {
@@ -420,9 +532,9 @@
                 "michelf/php-smartypants": "1.8.1",
                 "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
                 "phpmailer/phpmailer": "7.1.1",
-                "symfony/polyfill-intl-idn": "1.38.1",
+                "symfony/polyfill-intl-idn": "1.42.0",
                 "symfony/polyfill-mbstring": "1.38.2",
-                "symfony/yaml": "7.4.14"
+                "symfony/yaml": "7.4.18"
             },
             "replace": {
                 "symfony/polyfill-php72": "*"
@@ -483,54 +595,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2026-07-28T09:07:49+00:00"
-        },
-        {
-            "name": "getkirby/composer-installer",
-            "version": "1.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/getkirby/composer-installer.git",
-                "reference": "c98ece30bfba45be7ce457e1102d1b169d922f3d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/getkirby/composer-installer/zipball/c98ece30bfba45be7ce457e1102d1b169d922f3d",
-                "reference": "c98ece30bfba45be7ce457e1102d1b169d922f3d",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.0 || ^2.0"
-            },
-            "require-dev": {
-                "composer/composer": "^1.8 || ^2.0"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "Kirby\\ComposerInstaller\\Plugin"
-            },
-            "autoload": {
-                "psr-4": {
-                    "Kirby\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Kirby's custom Composer installer for the Kirby CMS and for Kirby plugins",
-            "homepage": "https://getkirby.com",
-            "support": {
-                "issues": "https://github.com/getkirby/composer-installer/issues",
-                "source": "https://github.com/getkirby/composer-installer/tree/1.2.1"
-            },
-            "funding": [
-                {
-                    "url": "https://getkirby.com/buy",
-                    "type": "custom"
-                }
-            ],
-            "time": "2020-12-28T12:54:39+00:00"
+            "time": "2026-09-16T10:39:26+00:00"
         },
         {
             "name": "laminas/laminas-escaper",
@@ -841,6 +906,78 @@
             "time": "2024-09-11T13:17:53+00:00"
         },
         {
+            "name": "revolt/event-loop",
+            "version": "v1.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/revoltphp/event-loop.git",
+                "reference": "44061cf513e53c6200372fc935ac42271566295d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/revoltphp/event-loop/zipball/44061cf513e53c6200372fc935ac42271566295d",
+                "reference": "44061cf513e53c6200372fc935ac42271566295d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "jetbrains/phpstorm-stubs": "^2019.3",
+                "phpunit/phpunit": "^9",
+                "psalm/phar": "6.16.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Revolt\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
+                },
+                {
+                    "name": "Cees-Jan Kiewiet",
+                    "email": "ceesjank@gmail.com"
+                },
+                {
+                    "name": "Christian Lück",
+                    "email": "christian@clue.engineering"
+                },
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                }
+            ],
+            "description": "Rock-solid event loop for concurrent PHP applications.",
+            "keywords": [
+                "async",
+                "asynchronous",
+                "concurrency",
+                "event",
+                "event-loop",
+                "non-blocking",
+                "scheduler"
+            ],
+            "support": {
+                "issues": "https://github.com/revoltphp/event-loop/issues",
+                "source": "https://github.com/revoltphp/event-loop/tree/v1.0.9"
+            },
+            "time": "2026-05-16T17:55:38+00:00"
+        },
+        {
             "name": "symfony/deprecation-contracts",
             "version": "v3.7.1",
             "source": {
@@ -996,16 +1133,16 @@
         },
         {
             "name": "symfony/polyfill-intl-idn",
-            "version": "v1.38.1",
+            "version": "v1.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-idn.git",
-                "reference": "dc21118016c039a66235cf93d96b435ffb282412"
+                "reference": "51b5ff5ba85452b31ec6f55490b08148612339d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/dc21118016c039a66235cf93d96b435ffb282412",
-                "reference": "dc21118016c039a66235cf93d96b435ffb282412",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/51b5ff5ba85452b31ec6f55490b08148612339d9",
+                "reference": "51b5ff5ba85452b31ec6f55490b08148612339d9",
                 "shasum": ""
             },
             "require": {
@@ -1059,7 +1196,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.38.1"
+                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.42.0"
             },
             "funding": [
                 {
@@ -1079,20 +1216,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-25T15:22:23+00:00"
+            "time": "2026-08-24T10:51:20+00:00"
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.38.0",
+            "version": "v1.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
-                "reference": "2d446c214bdbe5b71bde5011b060a05fece3ae6b"
+                "reference": "ebd57ccc7edb93d632e184efbe7693d2517bab3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/2d446c214bdbe5b71bde5011b060a05fece3ae6b",
-                "reference": "2d446c214bdbe5b71bde5011b060a05fece3ae6b",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/ebd57ccc7edb93d632e184efbe7693d2517bab3b",
+                "reference": "ebd57ccc7edb93d632e184efbe7693d2517bab3b",
                 "shasum": ""
             },
             "require": {
@@ -1144,7 +1281,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.38.0"
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.43.0"
             },
             "funding": [
                 {
@@ -1164,7 +1301,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-25T13:48:31+00:00"
+            "time": "2026-09-23T22:02:09+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1253,16 +1390,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v7.4.14",
+            "version": "v7.4.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "f8f328665ace2370d1e10645b807ba1646dc7dcc"
+                "reference": "4cef939e55b8a21c5780418de0d98ab00d0736e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/f8f328665ace2370d1e10645b807ba1646dc7dcc",
-                "reference": "f8f328665ace2370d1e10645b807ba1646dc7dcc",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/4cef939e55b8a21c5780418de0d98ab00d0736e1",
+                "reference": "4cef939e55b8a21c5780418de0d98ab00d0736e1",
                 "shasum": ""
             },
             "require": {
@@ -1305,7 +1442,7 @@
             "description": "Loads and dumps YAML files",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/yaml/tree/v7.4.14"
+                "source": "https://github.com/symfony/yaml/tree/v7.4.18"
             },
             "funding": [
                 {
@@ -1325,144 +1462,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-08T20:24:16+00:00"
-        }
-    ],
-    "packages-dev": [
-        {
-            "name": "carthage-software/mago",
-            "version": "1.50.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/carthage-software/mago.git",
-                "reference": "74c48ba74d708f38259c6325a4f12ff443fb19bf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/74c48ba74d708f38259c6325a4f12ff443fb19bf",
-                "reference": "74c48ba74d708f38259c6325a4f12ff443fb19bf",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4 || ~8.5 || ~8.6",
-                "revolt/event-loop": "^1.0.9"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^10.5"
-            },
-            "suggest": {
-                "ext-curl": "To show binary download progress"
-            },
-            "bin": [
-                "composer/bin/mago"
-            ],
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "composer/src/functions.php",
-                    "composer/src/internal.php"
-                ],
-                "psr-4": {
-                    "Mago\\": "composer/src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT OR Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Seifeddine Gmati",
-                    "email": "azjezz@carthage.software"
-                }
-            ],
-            "description": "Mago is a toolchain for PHP that aims to provide a set of tools to help developers write better code.",
-            "keywords": [
-                "dev"
-            ],
-            "support": {
-                "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.50.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/azjezz",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-09-21T11:41:07+00:00"
-        },
-        {
-            "name": "revolt/event-loop",
-            "version": "v1.0.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/revoltphp/event-loop.git",
-                "reference": "44061cf513e53c6200372fc935ac42271566295d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/revoltphp/event-loop/zipball/44061cf513e53c6200372fc935ac42271566295d",
-                "reference": "44061cf513e53c6200372fc935ac42271566295d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "ext-json": "*",
-                "jetbrains/phpstorm-stubs": "^2019.3",
-                "phpunit/phpunit": "^9",
-                "psalm/phar": "6.16.*"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Revolt\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Aaron Piotrowski",
-                    "email": "aaron@trowski.com"
-                },
-                {
-                    "name": "Cees-Jan Kiewiet",
-                    "email": "ceesjank@gmail.com"
-                },
-                {
-                    "name": "Christian Lück",
-                    "email": "christian@clue.engineering"
-                },
-                {
-                    "name": "Niklas Keller",
-                    "email": "me@kelunik.com"
-                }
-            ],
-            "description": "Rock-solid event loop for concurrent PHP applications.",
-            "keywords": [
-                "async",
-                "asynchronous",
-                "concurrency",
-                "event",
-                "event-loop",
-                "non-blocking",
-                "scheduler"
-            ],
-            "support": {
-                "issues": "https://github.com/revoltphp/event-loop/issues",
-                "source": "https://github.com/revoltphp/event-loop/tree/v1.0.9"
-            },
-            "time": "2026-05-16T17:55:38+00:00"
+            "time": "2026-08-30T00:47:26+00:00"
         }
     ],
     "aliases": [],
