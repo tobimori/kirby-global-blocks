@@ -25,13 +25,7 @@ class GlobalBlocks
 	public static function container(): GlobalBlocksPage
 	{
 		return static::$container ??= new GlobalBlocksPage([
-			'blueprint' => [
-				'name' => 'pages/global-blocks',
-				'title' => 'Global blocks',
-				'options' => false,
-			],
 			'root' => static::root(),
-			'site' => App::instance()->site(),
 			'slug' => '_global',
 			'template' => 'global-blocks',
 		]);
