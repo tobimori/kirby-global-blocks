@@ -70,6 +70,11 @@ class Resolver
 			return $block;
 		}
 
+		// a reference cycle would render forever, it can only exist if content was changed outside the Panel
+		if (GlobalBlocks::hasCycle($block['content']['uuid'])) {
+			return null;
+		}
+
 		$global = GlobalBlocks::find($block['content']['uuid']);
 		$source = $global?->block('latest');
 		if ($source === null) {

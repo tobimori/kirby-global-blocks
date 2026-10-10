@@ -5,6 +5,8 @@ namespace tobimori\GlobalBlocks\Models;
 use Kirby\Cms\Page;
 use Kirby\Cms\PageBlueprint;
 use Kirby\Cms\Pages;
+use Kirby\Content\VersionId;
+use Kirby\Exception\NotFoundException;
 use tobimori\GlobalBlocks\GlobalBlocks;
 
 class GlobalBlocksPage extends Page
@@ -28,5 +30,11 @@ class GlobalBlocksPage extends Page
 	public function isGlobalBlocksContainer(): bool
 	{
 		return true;
+	}
+
+	// the container is not a page of the website
+	public function render(array $data = [], $contentType = 'html', VersionId|string|null $versionId = null): string
+	{
+		throw new NotFoundException('Page not found');
 	}
 }

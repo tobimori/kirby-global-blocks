@@ -42,8 +42,31 @@ trait HasGlobalBlocks
 	{
 		return [
 			...parent::props(),
-			'globalBlocks' => $this->globalBlocksEnabled ? $this->globalOptions() : false,
+			// the Panel loads the global blocks when the block selector opens,
+			// a list in the props would repeat for every nested blocks field
+			'globalBlocks' => $this->globalBlocksEnabled,
+			'globalBlocksCreatable' => $this->globalBlocksEnabled ? $this->creatableTypes() : [],
 		];
+	}
+
+	/**
+	 * Block types of this field that the user can turn into global blocks
+	 */
+	protected function creatableTypes(): array
+	{
+		if (GlobalBlocks::permission('create') === false) {
+			return [];
+		}
+
+		$global = GlobalBlocks::fieldsets();
+		$types = [];
+		foreach ($this->fieldsets() as $fieldset) {
+			if ($global->find($fieldset->type()) !== null) {
+				$types[] = $fieldset->type();
+			}
+		}
+
+		return $types;
 	}
 
 	public function routes(): array
@@ -52,9 +75,31 @@ trait HasGlobalBlocks
 		$field = $this;
 
 		$routes[] = [
+			'pattern' => 'global-blocks',
+			'method' => 'GET',
+			'action' => fn() => $field->globalOptions(),
+		];
+
+		$routes[] = [
 			'pattern' => 'global-blocks/(:any)',
 			'method' => 'GET',
-			'action' => fn(string $uuid) => $field->expandedReference(GlobalBlocks::findOrFail($uuid), Str::uuid()),
+			'action' => fn(string $uuid) => $field->expandedFormValue(GlobalBlocks::findOrFail($uuid), Str::uuid()),
+		];
+
+		$routes[] = [
+			'pattern' => 'global-blocks/files',
+			'method' => 'POST',
+			'action' => function () use ($field) {
+				$block = $field->storedBlockFromRequest();
+
+				// lets the Panel ask whether the files of the host should be copied
+				return [
+					'files' => array_values(array_map(
+						fn($file) => $file->filename(),
+						GlobalBlocks::hostFiles($block['content'], $field->model()),
+					)),
+				];
+			},
 		];
 
 		$routes[] = [
@@ -62,21 +107,62 @@ trait HasGlobalBlocks
 			'method' => 'POST',
 			'action' => function () use ($field) {
 				$request = $field->model()->kirby()->request();
-				$block = $request->get('block');
-				if (is_array($block) === false) {
-					throw new \Kirby\Exception\InvalidArgumentException('Invalid block');
-				}
+				$block = $field->storedBlockFromRequest();
 
-				$field->fieldset($block['type'] ?? '');
-				$global = GlobalBlocks::create(type: $block['type'], content: array_diff_key($block['content'] ?? [], [
-					'_global' => null,
-				]), title: $request->get('title'), description: $request->get('description'));
+				$global = GlobalBlocks::createFromBlock(
+					type: $block['type'],
+					content: $block['content'],
+					host: $field->model(),
+					title: $request->get('title'),
+					description: $request->get('description'),
+					copyFiles: in_array($request->get('copyFiles'), [true, 'true'], true),
+				);
 
-				return $field->expandedReference($global, $block['id'] ?? Str::uuid(), $block['isHidden'] ?? false);
+				return $field->expandedFormValue($global, $block['id'], $block['isHidden']);
 			},
 		];
 
 		return $routes;
+	}
+
+	/**
+	 * Reads the block from the request and converts the Panel form values
+	 * to the stored values of this field, for example file objects to UUIDs
+	 */
+	public function storedBlockFromRequest(): array
+	{
+		$block = $this->model()->kirby()->request()->get('block');
+		if (is_array($block) === false) {
+			throw new \Kirby\Exception\InvalidArgumentException('Invalid block');
+		}
+
+		$type = is_string($block['type'] ?? null) ? $block['type'] : '';
+		$this->fieldset($type);
+		$id = is_string($block['id'] ?? null) ? $block['id'] : Str::uuid();
+
+		$content = $this->blocksToValues([[
+			'content' => array_diff_key(is_array($block['content'] ?? null) ? $block['content'] : [], [
+				'_global' => null,
+			]),
+			'id' => $id,
+			'type' => $type,
+		]], 'toStoredValues')[0]['content'];
+
+		return [
+			'content' => $content,
+			'id' => $id,
+			'isHidden' => ($block['isHidden'] ?? false) === true,
+			'type' => $type,
+		];
+	}
+
+	/**
+	 * The expanded reference with Panel form values, for example file objects instead of UUIDs
+	 */
+	public function expandedFormValue(GlobalBlockPage $global, string $placementId, bool $isHidden = false): array
+	{
+		$block = $this->expandedReference($global, $placementId, $isHidden);
+		return $this->blocksToValues([$block], 'toFormValues')[0] ?? $block;
 	}
 
 	public function expandedReference(
@@ -91,7 +177,8 @@ trait HasGlobalBlocks
 		}
 
 		$data = $source->toArray();
-		$data['id'] = $revision ?? $placementId;
+		// the revision only marks the host content as changed, the placement keeps its id
+		$data['id'] = $placementId;
 		$data['isHidden'] = $isHidden;
 		$data['content']['_global'] = [
 			...$global->panelData(),
@@ -129,8 +216,15 @@ trait HasGlobalBlocks
 		return $result;
 	}
 
-	protected function globalOptions(): array
+	/**
+	 * The global blocks whose block type is available in this field
+	 */
+	public function globalOptions(): array
 	{
+		if ($this->globalBlocksEnabled === false) {
+			return [];
+		}
+
 		$options = [];
 		foreach (GlobalBlocks::items() as $global) {
 			if (
@@ -174,7 +268,7 @@ trait HasGlobalBlocks
 				'revision' => $global['revision'] ?? null,
 				'uuid' => $global['uuid'],
 			]),
-			'id' => $global['revision'] ?? $block['id'] ?? Str::uuid(),
+			'id' => $block['id'] ?? Str::uuid(),
 			'isHidden' => $block['isHidden'] ?? false,
 			'type' => 'global',
 		];

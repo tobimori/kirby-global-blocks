@@ -44,6 +44,9 @@ App::plugin('tobimori/global-blocks', [
 	'pages' => [
 		'_global' => GlobalBlocks::container(),
 	],
+	'templates' => [
+		'global-block-preview' => __DIR__ . '/templates/global-block-preview.php',
+	],
 	'areas' => require __DIR__ . '/config/areas.php',
 	'routes' => require __DIR__ . '/config/routes.php',
 	'hooks' => require __DIR__ . '/config/hooks.php',

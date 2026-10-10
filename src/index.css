@@ -59,13 +59,25 @@
 }
 
 .k-global-block-lock {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-1);
+	min-width: 0;
 	margin-inline-start: auto;
 }
 
-/* pasted blocks cannot become global blocks here */
-.k-global-blocks-selector .k-clipboard-hint {
-	display: none;
+.k-global-block-lock-user {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
+
+.k-global-block-missing {
+	padding: var(--spacing-3) 0;
+	color: var(--color-text-dimmed);
+	font-size: var(--text-sm);
+}
+
 
 .k-global-block-preview {
 	--ratio: 16/10;
@@ -182,6 +194,10 @@
 }
 
 .k-global-block-card-info {
+	display: -webkit-box;
 	margin-top: 0.125em;
+	overflow: hidden;
 	color: var(--color-text-dimmed);
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
 }

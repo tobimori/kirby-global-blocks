@@ -7,6 +7,9 @@ use tobimori\GlobalBlocks\GlobalBlocks;
 use tobimori\GlobalBlocks\Models\GlobalBlockPage;
 
 return [
+	'system.loadPlugins:after' => function (): void {
+		GlobalBlocks::populateUuids();
+	},
 	'panel.route:before' => function ($route, $path) {
 		if ($path === 'pages/_global') {
 			Panel::go(kirby()->url('panel') . '/global-blocks');

@@ -37,7 +37,7 @@
 				</details>
 
 				<!-- eslint-disable-next-line vue/no-v-html -->
-				<p class="k-clipboard-hint" v-html="$t('field.blocks.fieldsets.paste', { shortcut })" />
+				<p v-if="clipboard" class="k-clipboard-hint" v-html="$t('field.blocks.fieldsets.paste', { shortcut })" />
 			</div>
 
 			<section v-if="globalBlocks.length">
@@ -57,6 +57,9 @@
 							<p v-if="global.title !== global.typeName" class="k-global-block-card-info">
 								{{ global.typeName }}
 							</p>
+							<p v-if="global.description" class="k-global-block-card-info">
+								{{ global.description }}
+							</p>
 						</div>
 					</div>
 				</k-navigate>
@@ -69,6 +72,10 @@
 export default {
 	extends: "k-block-selector",
 	props: {
+		clipboard: {
+			type: Boolean,
+			default: true
+		},
 		globalBlocks: {
 			type: Array,
 			default: () => []

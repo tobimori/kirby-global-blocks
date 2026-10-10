@@ -12,5 +12,10 @@
 	"missing": "Der globale Block existiert nicht",
 	"deleteReferenced": "Dieser globale Block wird noch verwendet und kann nicht gelöscht werden.",
 	"locked": "Dieser globale Block wird von einer anderen Person bearbeitet.",
-	"singleBlock": "Ein globaler Block muss genau einen Block enthalten."
+	"singleBlock": "Ein globaler Block muss genau einen Block enthalten.",
+	"usedBy": "Dieser globale Block wird noch verwendet und kann nicht gelöscht werden:",
+	"missingInfo": "Entferne diesen Block oder stelle den globalen Block wieder her.",
+	"lockedBy": "Gesperrt von {email}",
+	"copyFiles": "Dateien in den globalen Block kopieren",
+	"copyFilesHelp": "Der Block verwendet Dateien dieser Seite: {files}. Ohne Kopie verwendet der globale Block die Dateien dieser Seite."
 }

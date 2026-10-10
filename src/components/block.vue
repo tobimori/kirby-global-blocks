@@ -33,10 +33,18 @@
 			<span class="k-global-block-title" @dblclick.stop="renameGlobal">
 				{{ globalBlock.title || $t("global-blocks.global") }}
 			</span>
-			<k-icon v-if="globalBlock.lock?.isLocked" class="k-global-block-lock" type="lock" />
+			<span v-if="globalBlock.lock?.isLocked" :title="lockedBy" class="k-global-block-lock">
+				<k-icon type="lock" />
+				<span v-if="globalBlock.lock.user?.email" class="k-global-block-lock-user">
+					{{ globalBlock.lock.user.email }}
+				</span>
+			</span>
 		</div>
 
-		<div :class="className" :data-disabled="isContentDisabled" class="k-block">
+		<p v-if="globalBlock?.missing" class="k-global-block-missing">
+			{{ $t("global-blocks.missingInfo") }}
+		</p>
+		<div v-else :class="className" :data-disabled="isContentDisabled" class="k-block">
 			<component
 				:is="customComponent"
 				ref="editor"
@@ -52,7 +60,7 @@
 			ref="options"
 			v-bind="{
 				globalBlock,
-				globalBlocksEnabled,
+				globalBlocksEnabled: canMakeGlobal,
 				isBatched,
 				isEditable,
 				isFull,
@@ -74,24 +82,31 @@ export default {
 		globalBlock() {
 			return this.content?._global ?? null
 		},
-		globalBlocksEnabled() {
-			return this.blocksOwner()?.isGlobalBlocksEnabled === true
+		canMakeGlobal() {
+			return this.blocksOwner()?.creatableGlobalTypes?.includes(this.type) === true
+		},
+		canUpdateGlobal() {
+			return (
+				this.globalBlock?.missing !== true &&
+				this.globalBlock?.lock?.isLocked !== true &&
+				this.globalBlock?.permissions?.update !== false
+			)
 		},
 		isDisabled() {
 			return this.disabled === true || this.fieldset.disabled === true
 		},
 		isContentDisabled() {
-			return this.isDisabled || this.globalBlock?.lock?.isLocked === true
+			return this.isDisabled || (this.globalBlock !== null && this.canUpdateGlobal === false)
 		},
 		isEditable() {
-			return (
-				this.globalBlock?.missing !== true &&
-				this.globalBlock?.lock?.isLocked !== true &&
-				this.fieldset.editable !== false
-			)
+			return (this.globalBlock === null || this.canUpdateGlobal) && this.fieldset.editable !== false
 		},
 		isGlobalBlockEditor() {
 			return this.endpoints?.model?.replace(/^\//, "").startsWith("pages/_global+") === true
+		},
+		lockedBy() {
+			const email = this.globalBlock?.lock?.user?.email
+			return email ? this.$t("global-blocks.lockedBy", { email }) : this.$t("global-blocks.locked")
 		},
 		listeners() {
 			return {
@@ -188,7 +203,7 @@ export default {
 			}
 		},
 		renameGlobal() {
-			if (this.globalBlock?.missing === true || this.globalBlock?.lock?.isLocked === true) {
+			if (this.canUpdateGlobal === false) {
 				return
 			}
 
@@ -211,23 +226,14 @@ export default {
 				},
 				on: {
 					submit: async ({ title }) => {
-						try {
-							await this.$api.post(`${this.globalBlock.apiUrl}/changes/save`, { title }, { silent: true })
-							if ((await this.blocksOwner()?.renameGlobalBlock(this.globalBlock, title)) !== false) {
-								this.$panel.dialog.close()
-							}
-						} catch (error) {
-							if (error?.details?.isLocked) {
-								this.$panel.view.reload()
-								return
-							}
-							this.$panel.notification.error(error)
+						if ((await this.blocksOwner()?.renameGlobalBlock(this.globalBlock, title)) !== false) {
+							this.$panel.dialog.close()
 						}
 					}
 				}
 			})
 		},
-		async onInput(value) {
+		onInput(value) {
 			if (!this.globalBlock) {
 				this.$emit("update", value)
 				return
@@ -235,23 +241,20 @@ export default {
 
 			const content = { ...value }
 			delete content._global
-			const block = {
-				content,
-				id: this.globalBlock.blockId,
-				isHidden: false,
-				type: this.type
-			}
+			const owner = this.blocksOwner()
 
-			try {
-				await this.$api.post(`${this.globalBlock.apiUrl}/changes/save`, { block: [block] }, { silent: true })
-				await this.blocksOwner()?.updateGlobalBlock(this.id, content, this.globalBlock)
-			} catch (error) {
-				if (error?.details?.isLocked) {
-					this.$panel.view.reload()
-					return
-				}
-				this.$panel.notification.error(error)
-			}
+			// update all placements at once, the global block is saved in order in the background
+			owner?.updateGlobalBlock(content, this.globalBlock)
+			owner?.queueGlobalSave(this.globalBlock, {
+				block: [
+					{
+						content,
+						id: this.globalBlock.blockId,
+						isHidden: false,
+						type: this.type
+					}
+				]
+			})
 		}
 	}
 }
