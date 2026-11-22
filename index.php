@@ -17,6 +17,7 @@ use Kirby\Data\Json;
 use Kirby\Filesystem\Dir;
 use Kirby\Filesystem\F;
 use Kirby\Toolkit\A;
+use tobimori\GlobalBlocks\Agents;
 use tobimori\GlobalBlocks\Fields\GlobalBlocksField;
 use tobimori\GlobalBlocks\Fields\GlobalLayoutField;
 use tobimori\GlobalBlocks\GlobalBlocks;
@@ -55,6 +56,14 @@ App::plugin('tobimori/global-blocks', [
 		'create' => true,
 		'update' => true,
 		'delete' => true,
+	],
+	// read only by Kirby Agents, so its classes are not loaded without it
+	'tobimori.agents.fields' => [
+		'blocks' => Agents\BlocksField::class,
+		'layout' => Agents\LayoutField::class,
+	],
+	'tobimori.agents.tools' => [
+		Agents\GlobalBlocksFind::class,
 	],
 	'translations' => A::keyBy(A::map(Dir::files(__DIR__ . '/translations'), function (string $file): array {
 		$translations = [];

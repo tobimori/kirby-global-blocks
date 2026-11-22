@@ -5,7 +5,7 @@ php-version = "8.3"
 
 [source]
 paths = ["classes", "config", "index.php"]
-includes = ["vendor"]
+includes = ["vendor", ".repos/plugins"]
 
 [source.glob]
 literal-separator = true

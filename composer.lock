@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e6638057dcd3ddfaeb21afc6edc5a36e",
+    "content-hash": "df9dbf7c2a64cb240da15f7b49a88ecd",
     "packages": [
         {
             "name": "getkirby/composer-installer",
@@ -1463,6 +1463,57 @@
                 }
             ],
             "time": "2026-08-30T00:47:26+00:00"
+        },
+        {
+            "name": "tobimori/kirby-agents",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tobimori/kirby-agents.git",
+                "reference": "6d584b4581000b3fb78d38f9df900eb9abeeeb3a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tobimori/kirby-agents/zipball/6d584b4581000b3fb78d38f9df900eb9abeeeb3a",
+                "reference": "6d584b4581000b3fb78d38f9df900eb9abeeeb3a",
+                "shasum": ""
+            },
+            "require": {
+                "getkirby/composer-installer": "^1.2.1",
+                "php": ">=8.2.0"
+            },
+            "require-dev": {
+                "carthage-software/mago": "^1.50.0",
+                "distantnative/retour-for-kirby": "^5.6",
+                "getkirby/cms": "^5.0.0"
+            },
+            "type": "kirby-plugin",
+            "extra": {
+                "kirby-cms-path": false,
+                "kirby-plugin-path": ".repos/vendor/plugins"
+            },
+            "autoload": {
+                "psr-4": {
+                    "tobimori\\Agents\\": "classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Tobias Möritz",
+                    "email": "tobias@moeritz.io"
+                }
+            ],
+            "description": "Stateless MCP server for Kirby CMS with OAuth, blueprint-aware editing, and page lifecycle tools",
+            "homepage": "https://github.com/tobimori/kirby-agents#readme",
+            "support": {
+                "issues": "https://github.com/tobimori/kirby-agents/issues",
+                "source": "https://github.com/tobimori/kirby-agents/tree/0.2.0"
+            },
+            "time": "2026-10-19T11:49:13+00:00"
         }
     ],
     "aliases": [],
