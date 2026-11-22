@@ -110,7 +110,7 @@ class GlobalBlockPage extends Page
 								'block' => [
 									'label' => false,
 									'type' => 'blocks',
-									'fieldsets' => [$this->blockType()],
+									'globalBlockType' => $this->blockType(),
 									'globalBlocks' => false,
 									'max' => 1,
 									'min' => 1,
