@@ -97,9 +97,29 @@ class GlobalBlocksFind implements Tool
 	protected static function texts(mixed $value): array
 	{
 		if (is_string($value)) {
-			return [$value];
+			// nested blocks and layouts are stored as JSON
+			$nested = str_starts_with($value, '[') ? json_decode($value, true) : null;
+
+			return is_array($nested) ? static::itemTexts($nested) : [$value];
 		}
 
 		return is_array($value) ? array_merge([], ...array_map(static::texts(...), array_values($value))) : [];
+	}
+
+	/**
+	 * The texts of nested blocks, layout rows, and columns, without their ids, settings, and references
+	 *
+	 * @return list<string>
+	 */
+	protected static function itemTexts(array $items): array
+	{
+		return array_merge([], ...array_map(static fn(mixed $item): array => match (true) {
+			is_array($item) === false => static::texts($item),
+			($item['type'] ?? null) === 'global' => [],
+			is_array($item['content'] ?? null) => static::texts($item['content']),
+			is_array($item['columns'] ?? null) => static::itemTexts($item['columns']),
+			is_array($item['blocks'] ?? null) => static::itemTexts($item['blocks']),
+			default => static::texts($item),
+		}, array_values($items)));
 	}
 }
