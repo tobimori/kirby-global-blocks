@@ -1,4 +1,4 @@
-- `bash scripts/setup.sh` installs dependencies and creates a Kirby Starterkit playground in `.playground/` with this plugin linked. Panel credentials are in `.playground/.panel-credentials`. The blocks field of the notes and the layout field of the about page have global blocks enabled.
+- `bash scripts/setup.sh` installs dependencies and creates a Kirby Starterkit playground in `.playground/` with this plugin linked and Kirby Agents installed, so its MCP endpoint is at `/panel/mcp`. Panel credentials are in `.playground/.panel-credentials`. The blocks field of the notes and the layout field of the about page have global blocks enabled.
 - `pnpm playground` serves it at `http://localhost:8000` (`pnpm playground:portless` for a Portless URL, see `pnpm exec portless list`), and `pnpm dev` adds panel HMR.
 - `index.js` and `index.css` are committed build output: run `pnpm build` after changes in `src/`.
 - Check PHP with `composer fix` (Mago format), and JS with `pnpm lint` and `pnpm format`.

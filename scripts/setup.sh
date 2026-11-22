@@ -7,12 +7,16 @@ playground=.playground
 pnpm install --frozen-lockfile
 composer install --no-interaction
 
-kirby_version="$(php -r '
-	$lock = json_decode(file_get_contents("composer.lock"), true);
-	foreach (array_merge($lock["packages"], $lock["packages-dev"]) as $package) {
-		if ($package["name"] === "getkirby/cms") echo $package["version"];
-	}
-')"
+locked_version() {
+	php -r '
+		$lock = json_decode(file_get_contents("composer.lock"), true);
+		foreach (array_merge($lock["packages"], $lock["packages-dev"]) as $package) {
+			if ($package["name"] === $argv[1]) echo $package["version"];
+		}
+	' "$1"
+}
+
+kirby_version="$(locked_version getkirby/cms)"
 
 # Kirby Starterkit at the same Kirby version as the plugin's lock file
 if [[ ! -d "$playground" ]]; then
@@ -29,6 +33,12 @@ if php -r '
 else
 	composer require --working-dir="$playground" --no-interaction --no-security-blocking --with-all-dependencies \
 		"getkirby/cms:$kirby_version"
+fi
+
+# Kirby Agents, to test the global blocks tools over MCP
+if ! grep -q '"tobimori/kirby-agents"' "$playground/composer.json"; then
+	composer require --working-dir="$playground" --no-interaction --no-security-blocking \
+		"tobimori/kirby-agents:$(locked_version tobimori/kirby-agents)"
 fi
 
 mkdir -p "$playground/site/plugins"
