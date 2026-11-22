@@ -129,5 +129,8 @@ return [
 
 ```bash
 mise run setup
+pnpm playground
 mise run dev
 ```
+
+`mise run setup` creates a Kirby Starterkit playground in `.playground/`. The Panel credentials are in `.playground/.panel-credentials`.

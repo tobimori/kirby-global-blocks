@@ -4,11 +4,8 @@ php = "8.5.9"
 pnpm = "11.20.0"
 
 [tasks.setup]
-description = "Install plugin dependencies"
-run = [
-	"composer install",
-	"pnpm install --frozen-lockfile",
-]
+description = "Install dependencies and create the playground"
+run = "bash scripts/setup.sh"
 
 [tasks.dev]
 description = "Start the KirbyUp development server"
