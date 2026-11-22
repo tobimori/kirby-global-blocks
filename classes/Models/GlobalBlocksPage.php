@@ -24,7 +24,7 @@ class GlobalBlocksPage extends Page
 
 	public function children(): Pages
 	{
-		return GlobalBlocks::items();
+		return $this->children ??= GlobalBlocks::items();
 	}
 
 	public function isGlobalBlocksContainer(): bool
