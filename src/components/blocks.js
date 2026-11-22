@@ -34,6 +34,23 @@ export default {
 		isGlobalBlocksEnabled() {
 			// layout columns get the option from the layout field
 			return (this.globalBlocks ?? this.globalBlocksContext?.()) === true
+		},
+		isMergable() {
+			if (this.selected.length < 2) {
+				return false
+			}
+
+			const blocks = this.selected.map((id) => this.find(id))
+
+			// a merge writes into the first block, a global block would change on every page
+			if (blocks.some((block) => block.content?._global)) {
+				return false
+			}
+
+			return (
+				new Set(blocks.map((block) => block.type)).size === 1 &&
+				typeof this.ref(blocks[0]).$refs.editor.merge === "function"
+			)
 		}
 	},
 	created() {
