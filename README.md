@@ -134,3 +134,9 @@ mise run dev
 ```
 
 `mise run setup` creates a Kirby Starterkit playground in `.playground/`. The Panel credentials are in `.playground/.panel-credentials`.
+
+## License
+
+[MIT](LICENSE.md)
+
+Copyright 2026 © Tobias Möritz - Love & Kindness GmbH

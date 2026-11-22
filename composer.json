@@ -3,7 +3,7 @@
 	"description": "Reusable global blocks for Kirby blocks and layout fields",
 	"type": "kirby-plugin",
 	"version": "0.1.1",
-	"license": "proprietary",
+	"license": "MIT",
 	"autoload": {
 		"psr-4": {
 			"tobimori\\GlobalBlocks\\": "classes/"
