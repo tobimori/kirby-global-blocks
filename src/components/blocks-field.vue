@@ -5,7 +5,7 @@
 		:input="false"
 		:style="$attrs.style"
 	>
-		<template v-if="!isGlobalBlockEditor && !disabled && hasFieldsets" #options>
+		<template v-if="!globalBlockType && !disabled && hasFieldsets" #options>
 			<k-button-group layout="collapsed">
 				<k-button
 					:autofocus="autofocus"
@@ -39,7 +39,7 @@
 			/>
 		</k-validator>
 
-		<footer v-if="!isGlobalBlockEditor && !disabled && !isEmpty && !isFull && hasFieldsets">
+		<footer v-if="!globalBlockType && !disabled && !isEmpty && !isFull && hasFieldsets">
 			<k-button
 				:title="$t('add')"
 				icon="add"
@@ -57,10 +57,8 @@ import GlobalBlocksField from "../mixins/global-blocks-field.js"
 export default {
 	extends: "k-blocks-field",
 	mixins: [GlobalBlocksField],
-	computed: {
-		isGlobalBlockEditor() {
-			return this.endpoints?.model?.replace(/^\//, "").startsWith("pages/_global+") === true
-		}
+	props: {
+		globalBlockType: String
 	}
 }
 </script>

@@ -17,7 +17,7 @@ class GlobalBlocksField extends BlocksField
 	/**
 	 * Block type of the field in the global block editor
 	 */
-	#[Prop(export: false)]
+	#[Prop]
 	protected ?string $globalBlockType = null;
 
 	public function fieldsets(): Fieldsets

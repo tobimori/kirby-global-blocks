@@ -14,6 +14,7 @@ export default {
 		}
 	},
 	props: {
+		globalBlockType: String,
 		globalBlocks: {
 			type: Boolean,
 			default: null

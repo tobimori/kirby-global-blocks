@@ -99,7 +99,7 @@ export default {
 			return (this.globalBlock === null || this.canUpdateGlobal) && this.fieldset.editable !== false
 		},
 		isGlobalBlockEditor() {
-			return this.endpoints?.model?.replace(/^\//, "").startsWith("pages/_global+") === true
+			return Boolean(this.blocksOwner()?.globalBlockType)
 		},
 		lockedBy() {
 			const email = this.globalBlock?.lock?.user?.email
