@@ -46,6 +46,13 @@ class GlobalBlockPage extends Page
 	public function contentFileData(array $data, ?string $languageCode = null): array
 	{
 		$data = parent::contentFileData($data, $languageCode);
+
+		// when Kirby deletes the page, `Changes::untrack()` reads the UUID after the content is gone
+		// and stores a new one, the page directory is removed right after
+		if (array_key_exists('block', $data) === false && $this->version('latest')->exists('default') === false) {
+			return $data;
+		}
+
 		$this->validateBlock($data['block'] ?? null);
 		return $data;
 	}
