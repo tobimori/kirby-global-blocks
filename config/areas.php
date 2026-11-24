@@ -1,14 +1,48 @@
 <?php
 
 use Kirby\Cms\App;
+use Kirby\Cms\Page;
 use Kirby\Content\LockedContentException;
 use Kirby\Exception\PermissionException;
 use Kirby\Panel\Field;
+use Kirby\Panel\Ui\Button\SettingsButton;
+use Kirby\Panel\Ui\Button\ViewButton;
 use Kirby\Toolkit\Escape;
-use Kirby\Toolkit\I18n;
+use Kirby\Toolkit\HtmlString;
 use tobimori\GlobalBlocks\GlobalBlocks;
+use tobimori\GlobalBlocks\Models\GlobalBlockPage;
+use tobimori\GlobalBlocks\Panel\GlobalBlockViewController;
 
 return [
+	'site' => fn() => [
+		'buttons' => [
+			// the plugin dialog checks usages and redirects to the global blocks view,
+			// Kirby also shows this button in the preview of a global block
+			'page.settings' => function (Page $page): ?ViewButton {
+				if ($page instanceof GlobalBlockPage === false) {
+					return new SettingsButton($page);
+				}
+
+				if ($page->guards()->isAvailable('delete') === false) {
+					return null;
+				}
+
+				return new ViewButton(
+					class: 'k-settings-view-button',
+					disabled: $page->lock()->isLocked(),
+					icon: 'cog',
+					options: [
+						[
+							'dialog' => 'global-blocks/' . $page->globalUuid() . '/delete',
+							'icon' => 'trash',
+							'text' => t('delete'),
+						],
+					],
+					title: t('settings'),
+				);
+			},
+		],
+	],
 	// an area must always return an array, the menu entry and views check the permission
 	'global-blocks' => fn() => [
 		'icon' => 'global-block',
@@ -17,30 +51,7 @@ return [
 		'views' => [
 			'global-block' => [
 				'pattern' => 'global-blocks/(:any)',
-				'action' => function (string $uuid): array {
-					GlobalBlocks::authorize('access');
-					$global = GlobalBlocks::findOrFail($uuid);
-					$data = $global->panelData();
-					$view = $global->panel()->view();
-					$view['component'] = 'k-global-block-view';
-					$view['breadcrumb'] = [
-						[
-							'label' => $data['title'],
-							'link' => $global->globalPanelUrl(true),
-						],
-					];
-					$view['props']['link'] = $global->globalPanelUrl(true);
-					$view['props']['permissions']['changeTitle'] = $data['permissions']['update'];
-					$view['props']['placeholder'] = $data['typeName'];
-					$view['props']['title'] = $data['titleValue'];
-					$view['props']['titleDialog'] = 'global-blocks/' . $uuid . '/changeTitle';
-					$view['props']['model']['link'] = $global->globalPanelUrl(true);
-					$view['props']['model']['parent'] = '/global-blocks';
-					$view['props']['next'] = null;
-					$view['props']['prev'] = null;
-
-					return $view;
-				},
+				'action' => GlobalBlockViewController::class,
 			],
 			'global-blocks' => [
 				'pattern' => 'global-blocks',
@@ -92,7 +103,7 @@ return [
 								]),
 								'description' => [
 									'buttons' => false,
-									'label' => t('description'),
+									'label' => t('global-blocks.descriptionLabel'),
 									'type' => 'textarea',
 								],
 							],
@@ -109,7 +120,7 @@ return [
 					$kirby = App::instance();
 					$global = GlobalBlocks::findOrFail($uuid);
 
-					if ($global->permissions()->can('update') === false) {
+					if ($global->guards()->isAvailable('update') === false) {
 						throw new PermissionException('You are not allowed to update this global block');
 					}
 
@@ -155,15 +166,16 @@ return [
 							'component' => 'k-text-dialog',
 							'props' => [
 								'submitButton' => false,
-								'text' =>
+								'text' => new HtmlString(
 									'<p>'
-										. Escape::html(
-											t('global-blocks.usedBy')
-											?? 'This global block is still used and cannot be deleted:',
-										)
-										. '</p><ul>'
-										. implode('', $usages)
-										. '</ul>',
+									. Escape::html(
+										t('global-blocks.usedBy')
+										?? 'This global block is still used and cannot be deleted:',
+									)
+									. '</p><ul>'
+									. implode('', $usages)
+									. '</ul>',
+								),
 							],
 						];
 					}
@@ -171,8 +183,8 @@ return [
 					return [
 						'component' => 'k-remove-dialog',
 						'props' => [
-							'text' => I18n::template('page.delete.confirm', replace: [
-								'title' => Escape::html($global->title()->value()),
+							'text' => HtmlString::translate('page.delete.confirm', [
+								'title' => $global->title()->value(),
 							]),
 						],
 					];

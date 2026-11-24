@@ -25,7 +25,7 @@ If a global block is deleted on disk, remaining placements show a missing-block 
 
 ## Save, Discard, and locks across pages
 
-You can edit a global block in **Global blocks** (with its files section) or inline on a page, where double-clicking the colored header bar renames it and repeated placements update together.
+You can edit a global block in **Global blocks** (with a list of its files) or inline on a page, where double-clicking the colored header bar renames it and repeated placements update together.
 
 Inline edits keep your unsaved changes until you save. Clicking **Save** publishes the page and every global block edited there. Clicking **Discard** discards both and deletes any global block converted in that session if nothing else uses it.
 
@@ -40,6 +40,8 @@ File fields rely on Kirby's `file://` UUIDs so references resolve on any page. G
 ## Limits
 
 Only `toBlocks()` and `toLayouts()` resolve references. Raw field reads, including `$site->search()`, see only the reference.
+
+A resolved placement is a `GlobalBlockReference` object that forwards method calls to the global block, so `instanceof` checks against your block models fail. Compare `$block->type()` instead.
 
 Block types match by name against your configured `fieldsets` ([Options](3_reference#options)). Inline block types need a matching block blueprint with the same name, and host field `extends` overrides do not apply.
 

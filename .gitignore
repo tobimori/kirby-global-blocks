@@ -2,5 +2,5 @@
 /vendor/
 /.repos/
 /.playground/
-/index.dev.mjs
+/index.dev.*
 /.DS_Store

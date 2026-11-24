@@ -7,7 +7,7 @@ In this tutorial, you will install Kirby Global Blocks, enable it on a `blocks` 
 
 ## Requirements
 
-Version 0.x supports Kirby 5 (5.5 or newer) and PHP 8.3 or newer. Version 1.x will support Kirby 6 (coming soon). Keep Kirby's UUIDs and `uuid` cache enabled.
+Version 1.x supports Kirby 6 and PHP 8.3 or newer. Version 0.x supports Kirby 5 (5.5 or newer). Keep Kirby's UUIDs and `uuid` cache enabled.
 
 ## Install the plugin
 

@@ -2,8 +2,8 @@
 
 namespace tobimori\GlobalBlocks\Models;
 
+use Kirby\Blueprint\PageBlueprint;
 use Kirby\Cms\Page;
-use Kirby\Cms\PageBlueprint;
 use Kirby\Cms\Pages;
 use Kirby\Content\VersionId;
 use Kirby\Exception\NotFoundException;

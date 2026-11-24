@@ -10,7 +10,7 @@ Reusable global blocks for Kirby blocks and layout fields
 composer require tobimori/kirby-global-blocks
 ```
 
-Version 0.x supports Kirby 5 (5.5 or newer). Version 1.x will support Kirby 6 (coming soon).
+Version 1.x supports Kirby 6. Version 0.x supports Kirby 5 (5.5 or newer).
 
 Enable global blocks on any `blocks` or `layout` field in your blueprints:
 

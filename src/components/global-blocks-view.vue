@@ -49,7 +49,7 @@ export default {
 					submit: async (type) => {
 						const response = await this.$panel.dialog.post({ type })
 						if (response) {
-							this.$panel.dialog.success(response.$dialog ?? {})
+							this.$panel.dialog.success(response[this.$panel.dialog.key()] ?? {})
 						}
 					}
 				}

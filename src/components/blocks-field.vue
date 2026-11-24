@@ -25,11 +25,11 @@
 					variant="filled"
 					@click="$refs.options.toggle()"
 				/>
-				<k-dropdown-content ref="options" :options="options" align-x="end" />
+				<k-dropdown ref="options" :options="options" align-x="end" />
 			</k-button-group>
 		</template>
 
-		<k-input-validator v-bind="{ min, max, required }" :value="JSON.stringify(value)">
+		<k-validator v-bind="{ min, max, required }" :count="value.length">
 			<k-blocks
 				ref="blocks"
 				v-bind="$props"
@@ -37,7 +37,7 @@
 				@input="$emit('input', $event)"
 				@open="opened = $event"
 			/>
-		</k-input-validator>
+		</k-validator>
 
 		<footer v-if="!isGlobalBlockEditor && !disabled && !isEmpty && !isFull && hasFieldsets">
 			<k-button
@@ -52,24 +52,11 @@
 </template>
 
 <script>
+import GlobalBlocksField from "../mixins/global-blocks-field.js"
+
 export default {
 	extends: "k-blocks-field",
-	props: {
-		globalBlocks: {
-			type: Boolean,
-			default: false
-		},
-		globalBlocksCreatable: {
-			type: Array,
-			default: () => []
-		}
-	},
-	provide() {
-		return {
-			globalBlocksContext: () => this.globalBlocks,
-			globalBlocksCreatableContext: () => this.globalBlocksCreatable
-		}
-	},
+	mixins: [GlobalBlocksField],
 	computed: {
 		isGlobalBlockEditor() {
 			return this.endpoints?.model?.replace(/^\//, "").startsWith("pages/_global+") === true

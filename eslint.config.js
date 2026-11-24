@@ -5,7 +5,7 @@ import globals from "globals"
 
 export default [
 	js.configs.recommended,
-	...pluginVue.configs["flat/vue2-essential"],
+	...pluginVue.configs["flat/essential"],
 	{
 		files: ["src/**/*.{js,vue}"],
 		languageOptions: {

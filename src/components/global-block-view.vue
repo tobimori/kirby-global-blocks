@@ -10,8 +10,8 @@
 			class="k-page-view-header"
 			@edit="$dialog(titleDialog)"
 		>
-			<template v-if="title">{{ title }}</template>
-			<span v-else class="k-header-title-placeholder">{{ placeholder }} …</span>
+			<span v-if="untitled" class="k-header-title-placeholder">{{ title }} …</span>
+			<template v-else>{{ title }}</template>
 
 			<template #buttons>
 				<k-view-buttons :buttons="buttons">
@@ -33,13 +33,12 @@
 
 		<k-model-tabs :diff="diff" :tab="tab.name" :tabs="tabs" />
 
-		<k-sections
-			:blueprint="blueprint"
+		<k-model-form
+			:api="api"
+			:columns="tab.columns"
 			:content="content"
-			:empty="$t('page.blueprint', { blueprint: $esc(blueprint) })"
+			:diff="diff"
 			:lock="lock"
-			:parent="api"
-			:tab="tab"
 			@input="onInput"
 			@submit="onSubmit"
 		/>
@@ -50,8 +49,8 @@
 export default {
 	extends: "k-page-view",
 	props: {
-		placeholder: String,
-		titleDialog: String
+		titleDialog: String,
+		untitled: Boolean
 	}
 }
 </script>

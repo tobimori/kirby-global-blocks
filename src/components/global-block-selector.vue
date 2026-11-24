@@ -31,13 +31,16 @@
 							:text="fieldset.name"
 							size="lg"
 							@click="$emit('submit', fieldset.type)"
-							@focus.native="$emit('input', fieldset.type)"
+							@focus="$emit('input', fieldset.type)"
 						/>
 					</k-navigate>
 				</details>
 
-				<!-- eslint-disable-next-line vue/no-v-html -->
-				<p v-if="clipboard" class="k-clipboard-hint" v-html="$t('field.blocks.fieldsets.paste', { shortcut })" />
+				<p
+					v-if="clipboard"
+					v-safe-html="$th('field.blocks.fieldsets.paste', { shortcut })"
+					class="k-clipboard-hint"
+				/>
 			</div>
 
 			<section v-if="globalBlocks.length">

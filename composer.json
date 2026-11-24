@@ -2,7 +2,7 @@
 	"name": "tobimori/kirby-global-blocks",
 	"description": "Reusable global blocks for Kirby blocks and layout fields",
 	"type": "kirby-plugin",
-	"version": "0.1.1",
+	"version": "1.0.0",
 	"license": "MIT",
 	"autoload": {
 		"psr-4": {
@@ -14,7 +14,7 @@
 		"getkirby/composer-installer": "^1.2.1"
 	},
 	"require-dev": {
-		"getkirby/cms": "^5.5",
+		"getkirby/cms": "^6.0",
 		"carthage-software/mago": "^1.50",
 		"tobimori/kirby-agents": "^0.2"
 	},
@@ -30,13 +30,13 @@
 		"optimize-autoloader": true
 	},
 	"conflict": {
-		"getkirby/cms": "<5.5"
+		"getkirby/cms": "<6.0"
 	},
 	"extra": {
 		"kirby-cms-path": false,
 		"kirby-plugin-path": ".repos/plugins",
 		"kirby": {
-			"compatible": "^5.5"
+			"compatible": "^6.0"
 		}
 	}
 }

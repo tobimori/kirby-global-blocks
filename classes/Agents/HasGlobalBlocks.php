@@ -226,12 +226,13 @@ trait HasGlobalBlocks
 
 	protected static function globalField(GlobalBlockPage $page): GlobalBlocksField
 	{
-		return new GlobalBlocksField([
-			'globalBlockType' => $page->blockType(),
-			'globalBlocks' => true,
-			'model' => $page,
-			'name' => 'block',
-		]);
+		return new GlobalBlocksField(
+			model: $page,
+			name: 'block',
+			type: 'blocks',
+			globalBlocks: true,
+			globalBlockType: $page->blockType(),
+		);
 	}
 
 	/**

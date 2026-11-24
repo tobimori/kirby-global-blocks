@@ -22,13 +22,14 @@ use tobimori\GlobalBlocks\Fields\GlobalBlocksField;
 use tobimori\GlobalBlocks\Fields\GlobalLayoutField;
 use tobimori\GlobalBlocks\GlobalBlocks;
 use tobimori\GlobalBlocks\Models\GlobalBlockPage;
+use tobimori\GlobalBlocks\Models\GlobalBlockReference;
 use tobimori\GlobalBlocks\Models\GlobalBlocksPage;
 
 if (
-	version_compare(App::version() ?? '0.0.0', '5.5.0', '<')
-	|| version_compare(App::version() ?? '0.0.0', '6.0.0', '>=')
+	version_compare(App::version() ?? '0.0.0', '6.0.0', '<')
+	|| version_compare(App::version() ?? '0.0.0', '7.0.0', '>=')
 ) {
-	throw new Exception('Kirby Global Blocks requires Kirby 5.5 or newer (Kirby 5)');
+	throw new Exception('Kirby Global Blocks 1.x requires Kirby 6');
 }
 
 App::plugin('tobimori/global-blocks', [
@@ -37,7 +38,9 @@ App::plugin('tobimori/global-blocks', [
 		'blocks' => GlobalBlocksField::class,
 		'layout' => GlobalLayoutField::class,
 	],
-	'fieldMethods' => require __DIR__ . '/config/field-methods.php',
+	'blockModels' => [
+		'global' => GlobalBlockReference::class,
+	],
 	'pageModels' => [
 		'global-block' => GlobalBlockPage::class,
 		'global-blocks' => GlobalBlocksPage::class,

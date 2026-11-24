@@ -56,7 +56,7 @@
 		</div>
 
 		<k-block-options
-			v-if="!isDisabled"
+			v-if="isLastSelected && !isDisabled"
 			ref="options"
 			v-bind="{
 				globalBlock,
@@ -91,9 +91,6 @@ export default {
 				this.globalBlock?.lock?.isLocked !== true &&
 				this.globalBlock?.permissions?.update !== false
 			)
-		},
-		isDisabled() {
-			return this.disabled === true || this.fieldset.disabled === true
 		},
 		isContentDisabled() {
 			return this.isDisabled || (this.globalBlock !== null && this.canUpdateGlobal === false)
@@ -153,10 +150,8 @@ export default {
 
 			for (const [tabName, tab] of Object.entries(tabs)) {
 				for (const [fieldName] of Object.entries(tab.fields ?? {})) {
-					tabs[tabName].fields[fieldName].section = this.name
 					tabs[tabName].fields[fieldName].endpoints = {
 						field: `${endpoint}/fieldsets/${this.type}/fields/${fieldName}`,
-						section: this.endpoints.section,
 						model: this.globalBlock?.apiUrl ?? this.endpoints.model
 					}
 				}

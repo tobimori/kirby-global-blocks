@@ -75,7 +75,7 @@ export default {
 		this.$events.on("global-blocks.update", this._syncGlobalBlock)
 		window.addEventListener("beforeunload", this._unlockGlobalBlocks)
 	},
-	destroyed() {
+	unmounted() {
 		this.$events.off("content.publish", this._publishGlobalBlocks)
 		this.$events.off("content.discard", this._discardGlobalBlocks)
 		this.$events.off("global-blocks.update", this._syncGlobalBlock)
@@ -118,9 +118,25 @@ export default {
 			if (results.some((result) => result.status === "rejected")) {
 				this.$panel.notification.error(this.$t("error"))
 			}
+
+			// the view refreshes after the publish or discard of the page, which can be before the global blocks are done
+			await this.$panel.view.refresh()
 		},
 		changedGlobalEntries() {
-			return Object.values(changedGlobalBlocks).filter((entry) => entry.host === this.hostApi())
+			// global blocks edited inside a global block, for example in its drawer, belong to the same page
+			const hosts = [this.hostApi()]
+			const entries = []
+
+			for (const host of hosts) {
+				for (const entry of Object.values(changedGlobalBlocks)) {
+					if (entry.host === host && entries.includes(entry) === false) {
+						entries.push(entry)
+						hosts.push(entry.apiUrl.replace(/^\//, ""))
+					}
+				}
+			}
+
+			return entries
 		},
 		async choose(index) {
 			// loaded on demand, so the list is current and not part of the field props
@@ -290,7 +306,7 @@ export default {
 		syncGlobalBlock({ content, revision, title, uuid }) {
 			let changed = false
 
-			for (const [index, block] of this.blocks.entries()) {
+			for (const block of this.blocks) {
 				const global = block.content?._global
 				if (global?.uuid !== uuid) {
 					continue
@@ -302,7 +318,7 @@ export default {
 				}
 
 				const source = content ?? block.content
-				this.$set(this.blocks[index], "content", { ...this.$helper.object.clone(source), _global: next })
+				block.content = { ...this.$helper.object.clone(source), _global: next }
 				changed = true
 			}
 
@@ -339,7 +355,7 @@ export default {
 		},
 		unlockGlobalBlocks() {
 			for (const entry of this.changedGlobalEntries()) {
-				this.$panel.content.unlock({
+				this.$panel.content.unlockBeaconRequest({
 					api: `/${entry.apiUrl.replace(/^\//, "")}`,
 					language: this.$panel.language.code
 				})

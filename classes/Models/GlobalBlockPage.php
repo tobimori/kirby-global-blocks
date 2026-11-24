@@ -2,18 +2,16 @@
 
 namespace tobimori\GlobalBlocks\Models;
 
+use Kirby\Blueprint\PageBlueprint;
 use Kirby\Cms\Block;
 use Kirby\Cms\Blocks;
 use Kirby\Cms\Page;
-use Kirby\Cms\PageBlueprint;
 use Kirby\Content\Field;
 use Kirby\Content\VersionId;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\NotFoundException;
-use Kirby\Panel\Page as PanelPage;
 use Kirby\Toolkit\Str;
 use tobimori\GlobalBlocks\GlobalBlocks;
-use tobimori\GlobalBlocks\Panel\GlobalBlockPagePanel;
 
 class GlobalBlockPage extends Page
 {
@@ -126,9 +124,9 @@ class GlobalBlockPage extends Page
 						],
 						'sidebar' => [
 							'width' => '1/3',
-							'sections' => [
+							'fields' => [
 								'files' => [
-									'type' => 'files',
+									'type' => 'filelist',
 								],
 							],
 						],
@@ -155,11 +153,6 @@ class GlobalBlockPage extends Page
 		return $relative ? $path : $this->kirby()->url('panel') . $path;
 	}
 
-	public function panel(): PanelPage
-	{
-		return new GlobalBlockPagePanel($this);
-	}
-
 	public function panelData(): array
 	{
 		$language = $this->kirby()->language()?->code() ?? 'default';
@@ -181,7 +174,7 @@ class GlobalBlockPage extends Page
 			'lock' => $this->lock()->toArray(),
 			'panelUrl' => $this->globalPanelUrl(true),
 			'permissions' => [
-				'update' => GlobalBlocks::permission('update') && $this->permissions()->can('update'),
+				'update' => GlobalBlocks::permission('update') && $this->guards()->isAvailable('update'),
 			],
 			'previewUrl' => $this->previewUrl($version),
 			'title' => $title !== '' ? $title : $typeName,

@@ -2,17 +2,28 @@
 
 namespace tobimori\GlobalBlocks\Fields\Concerns;
 
+use Kirby\Reflection\Attributes\Prop;
 use Kirby\Toolkit\Str;
 use tobimori\GlobalBlocks\GlobalBlocks;
 use tobimori\GlobalBlocks\Models\GlobalBlockPage;
 
 trait HasGlobalBlocks
 {
-	protected bool $globalBlocksEnabled = false;
+	/**
+	 * Allows editors to place global blocks and to turn blocks into global blocks
+	 */
+	#[Prop]
+	protected bool $globalBlocks = false;
+
+	/**
+	 * The Panel fills one form with the latest and the changes version. A global block
+	 * that is published in between must not make the two versions differ.
+	 */
+	protected array $globalPanelData = [];
 
 	public function blocksToValues(array $blocks, string $to = 'toFormValues'): array
 	{
-		if ($this->globalBlocksEnabled === false) {
+		if ($this->globalBlocks === false) {
 			foreach ($blocks as &$block) {
 				if (is_array($block['content'] ?? null)) {
 					unset($block['content']['_global']);
@@ -25,11 +36,14 @@ trait HasGlobalBlocks
 
 		$result = [];
 		foreach ($blocks as $block) {
-			if ($reference = $this->referenceFromExpanded($block)) {
-				if (in_array($to, ['content', 'toStoredValues'], true)) {
-					$result[] = $reference;
-					continue;
-				}
+			$reference = $this->referenceFromExpanded($block);
+			if ($reference !== null && $to === 'toStoredValues') {
+				$result[] = $reference;
+				continue;
+			}
+
+			if ($to === 'toFormValues') {
+				$block = $this->expandBlock($block);
 			}
 
 			$result[] = parent::blocksToValues([$block], $to)[0] ?? $block;
@@ -40,12 +54,11 @@ trait HasGlobalBlocks
 
 	public function props(): array
 	{
+		// the Panel loads the global blocks when the block selector opens,
+		// a list in the props would repeat for every nested blocks field
 		return [
 			...parent::props(),
-			// the Panel loads the global blocks when the block selector opens,
-			// a list in the props would repeat for every nested blocks field
-			'globalBlocks' => $this->globalBlocksEnabled,
-			'globalBlocksCreatable' => $this->globalBlocksEnabled ? $this->creatableTypes() : [],
+			'globalBlocksCreatable' => $this->globalBlocks ? $this->creatableTypes() : [],
 		];
 	}
 
@@ -69,9 +82,9 @@ trait HasGlobalBlocks
 		return $types;
 	}
 
-	public function routes(): array
+	public function api(): array
 	{
-		$routes = parent::routes();
+		$routes = parent::api();
 		$field = $this;
 
 		$routes[] = [
@@ -181,7 +194,7 @@ trait HasGlobalBlocks
 		$data['id'] = $placementId;
 		$data['isHidden'] = $isHidden;
 		$data['content']['_global'] = [
-			...$global->panelData(),
+			...($this->globalPanelData[$global->globalUuid()] ??= $global->panelData()),
 			'blockId' => $source->id(),
 			'revision' => $revision,
 		];
@@ -189,31 +202,22 @@ trait HasGlobalBlocks
 		return $data;
 	}
 
-	protected function expandBlocks(array $blocks): array
+	protected function expandBlock(array $block): array
 	{
-		$result = [];
-		foreach ($blocks as $block) {
-			if (($block['type'] ?? null) === 'global' && is_string($block['content']['uuid'] ?? null)) {
-				$global = GlobalBlocks::find($block['content']['uuid']);
-				$result[] = $global
-					? $this->expandedReference(
-						$global,
-						$block['id'] ?? Str::uuid(),
-						$block['isHidden'] ?? false,
-						is_string($block['content']['revision'] ?? null) ? $block['content']['revision'] : null,
-					)
-					: $this->missingReference(
-						$block['content']['uuid'],
-						$block['id'] ?? Str::uuid(),
-						$block['isHidden'] ?? false,
-					);
-				continue;
-			}
-
-			$result[] = $block;
+		$uuid = $block['content']['uuid'] ?? null;
+		if (($block['type'] ?? null) !== 'global' || is_string($uuid) === false) {
+			return $block;
 		}
 
-		return $result;
+		$id = $block['id'] ?? Str::uuid();
+		$isHidden = $block['isHidden'] ?? false;
+		$global = GlobalBlocks::find($uuid);
+		if ($global === null) {
+			return $this->missingReference($uuid, $id, $isHidden);
+		}
+
+		$revision = $block['content']['revision'] ?? null;
+		return $this->expandedReference($global, $id, $isHidden, is_string($revision) ? $revision : null);
 	}
 
 	/**
@@ -221,7 +225,7 @@ trait HasGlobalBlocks
 	 */
 	public function globalOptions(): array
 	{
-		if ($this->globalBlocksEnabled === false) {
+		if ($this->globalBlocks === false) {
 			return [];
 		}
 
